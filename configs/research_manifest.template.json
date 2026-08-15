@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "model": {
+    "model_id": "REPLACE_AFTER_AUTHORIZATION",
+    "model_stage": "research_locked",
+    "training_data": "restricted_research_not_distributed",
+    "architecture": "bilateral_linear_v1",
+    "clinical_use": false
+  },
+  "adapter": {
+    "kind": "pytorch_state_dict",
+    "version": "1",
+    "framework": "pytorch",
+    "framework_version": "2.13.0",
+    "device": "cpu",
+    "dtype": "float32",
+    "input_shape": [1, 9],
+    "output_shape": [1, 2]
+  },
+  "feature_contract": {
+    "version": "longitudinal-static-sex-delta8-v1",
+    "order": [
+      "sex_y1",
+      "height_delta_cm",
+      "weight_delta_kg",
+      "sbp_delta_mmhg",
+      "dbp_delta_mmhg",
+      "waist_delta_cm",
+      "wears_glasses_delta",
+      "axial_length_od_delta_mm",
+      "axial_length_os_delta_mm"
+    ],
+    "followup_months": 12
+  },
+  "preprocessing": {
+    "kind": "standardize",
+    "mean": [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "std": [1, 1, 1, 1, 1, 1, 1, 1, 1],
+    "sha256": "8a19ae44b187ffb88ff7ec6ddcc1a97764010040af7d35f67e2639f663c48a14"
+  },
+  "output_contract": {
+    "version": "bilateral-non-clinical-score-v1",
+    "order": ["od", "os"],
+    "kind": "logits_sigmoid"
+  },
+  "artifact": {
+    "filename": "research_model.pt",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "provenance": {
+    "source_commit": "0000000000000000000000000000000000000000",
+    "model_card": "MODEL_CARD_RESEARCH.md",
+    "model_card_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "authorization_request": {
+    "reference_id": null,
+    "requested_scope": "local_adapter_evaluation"
+  },
+  "self_test": {
+    "status": "not_exported",
+    "tolerance": 0.000001,
+    "cases": [],
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  }
+}

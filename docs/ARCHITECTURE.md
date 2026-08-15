@@ -23,6 +23,37 @@ flowchart LR
 6. **Trace IDs are end-to-end.** One safe ID links the response header, body and JSON log.
 7. **Logs are metadata-only.** Request bodies, clinical values and caller case aliases are excluded.
 
+## Sprint 2 adapter and authorization boundary
+
+```mermaid
+flowchart LR
+    subgraph PUBLIC["Public repository and CI"]
+        A["Synthetic JSON artifact"] --> B["RiskModelBackend"]
+        C["CI temporary synthetic state dict"] --> D["Internal _TorchStateDictRuntime"]
+        D --> E["ResearchModelAdapter contract tests"]
+        B --> F["Public FastAPI service"]
+        E --> G["Golden self-test + comparison builder"]
+    end
+
+    subgraph PRIVATE["Authorization-gated private environment"]
+        H["Private thesis source"] --> I["Authorization checklist"]
+        I -->|"explicit approval"| R["External policy receipt (unsigned JSON in v1)"]
+        H --> J["Allowlisted export + manifest"]
+        R --> K["Bounded package verification"]
+        J --> K
+        K --> M["Local golden-vector evaluation"]
+    end
+
+    I -->|"default: NOT_AUTHORIZED"| L["Do not copy, load or publish"]
+    M -.->|"No automatic public activation"| E
+```
+
+Phase A introduces a `RiskModelBackend` protocol, a manifest-validating `ResearchModelAdapter` and a lazy optional internal `_TorchStateDictRuntime`. The runtime has no public byte-loading factory and is constructed only from the verified-package result. Public tests create a deterministic synthetic PyTorch state dict only inside a temporary directory. A package cannot approve itself: loading also requires a package-external `ApprovalPolicy` whose receipt binds the complete canonical manifest, loader contract version, source commit plus artifact, preprocessing, model-card and golden-case hashes. The loader then enforces an exact three-file inventory, bounded regular files and one-time byte reads before deserialization. The default FastAPI process continues to load the synthetic JSON backend, and `RiskPredictionService` rejects any non-`demo_synthetic` stage.
+
+Phase B may evaluate an approved research export only in the location and scope named by the [authorization record](RESEARCH_ARTIFACT_AUTHORIZATION.md). The current generic comparison builder reports contract checks plus already-loaded sequential latency, but it is not an authorization security boundary; only the standard CLI guarantees it first received a package from `ResearchModelAdapter.from_package`. The report says this explicitly. It does not claim source-runtime parity, cold-load/resource measurements or model quality; both metric namespaces remain explicitly unavailable. Those broader evidence classes require separate, authorized Phase B work.
+
+An empty or unauthorized research section stays explicitly unavailable. Values from another experiment or from the synthetic model must never be copied into it. SHA-256 verifies byte-level integrity only; authorization trust comes from the external policy/receipt location, which is still not a digital signature unless an institutional signer is implemented.
+
 ## Error paths and readiness
 
 - Schema violations return a structured `request_validation_error` with no submitted value.
@@ -38,5 +69,5 @@ The service has no authentication, rate limiting, persistent audit store, revers
 
 - Export a locked research model through a documented adapter after authorization.
 - Add an image-quality gate and bilateral image encoder interface.
-- Add structured logging, latency histograms and drift summaries.
+- Extend the existing structured logs with aggregated latency histograms and drift summaries.
 - Add calibration and subgroup evaluation reports before any real-world pilot.

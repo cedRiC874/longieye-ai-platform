@@ -1,4 +1,4 @@
-# Model card: LongiEye synthetic static-sex + delta8 demo
+# Model card: LongiEye public synthetic static-sex + delta8 demo
 
 ## Summary
 
@@ -45,7 +45,9 @@ The exact values are stored in `configs/demo_model.json` and regenerated with th
 
 ## Relationship to the source research
 
-The private thesis repository reported a locked longitudinal clinical experiment on 1,547 participants with 140/130 OD/OS events. Its delta-only clinical macro AUC was `0.8824 +/- 0.0105`. That result belongs to the research pipeline and is not produced by this service. No research checkpoint, patient-level record or OOF prediction is packaged here.
+The feature contract was informed by a private thesis repository, but this model card intentionally contains no thesis performance number. A research metric may be published only after it is mapped to one named experiment, a fixed source commit, an aggregate result file, its calculation script and the corresponding thesis table.
+
+Different cohorts, modalities, ablations and validation designs must remain separate. Research results belong in an authorization-reviewed card created from the [research model-card template](RESEARCH_MODEL_CARD_TEMPLATE.md), not in this synthetic model card. The default research-artifact status is `NOT_AUTHORIZED`; no research checkpoint, preprocessing statistics, participant-level record or OOF prediction is packaged here.
 
 ## Intended uses
 
@@ -65,7 +67,7 @@ The private thesis repository reported a locked longitudinal clinical experiment
 - Synthetic rows cannot represent clinical prevalence, missingness, acquisition shift or subgroup behavior.
 - The binary `sex_code` mirrors a historical research encoding and does not represent gender identity.
 - The simple logistic form cannot represent the multimodal image branch.
-- Python allocation memory is measured, but operating-system RSS and container behavior are not yet measured.
+- The local benchmark measures process RSS and Python allocation peaks, but it does not characterize container limits, accelerator memory or production resource behavior.
 - The local benchmark excludes network, reverse-proxy and concurrent-load overhead.
 
 ## Reproducibility

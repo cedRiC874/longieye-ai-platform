@@ -14,6 +14,10 @@ from typing import Any
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 from longieye.features import FEATURE_ORDER  # noqa: E402
+from longieye.model_contract import (  # noqa: E402
+    FEATURE_CONTRACT_VERSION,
+    OUTPUT_CONTRACT_VERSION,
+)
 
 
 ARTIFACT_SIGNIFICANT_DIGITS = 12
@@ -205,6 +209,12 @@ def main() -> None:
             "model_id": "longieye-synthetic-static-sex-delta8-v0",
             "model_stage": "demo_synthetic",
             "training_data": "deterministic synthetic data only",
+            "adapter_kind": "json_logistic",
+            "adapter_version": "1",
+            "framework": "python_stdlib",
+            "framework_version": "1",
+            "feature_contract_version": FEATURE_CONTRACT_VERSION,
+            "output_contract_version": OUTPUT_CONTRACT_VERSION,
             "synthetic_seed": args.seed,
             "training_samples": len(train_values),
             "validation_samples": len(validation_values),

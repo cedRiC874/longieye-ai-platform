@@ -33,7 +33,7 @@ def test_health_exposes_demo_safety_state():
         "status": "ok",
         "model_stage": "demo_synthetic",
         "model_id": "longieye-synthetic-static-sex-delta8-v0",
-        "api_version": "0.2.0",
+        "api_version": "0.3.0",
         "clinical_use": False,
     }
     assert response.headers["X-Request-ID"]

@@ -2,27 +2,27 @@
 
 ## Source
 
-The feature contract was derived from the private repository
-`cedRiC874/myopia-thesis-code`, especially:
-
-- `clinical_representations_10x5/run_config.json`;
-- `al_delta_ablation_10x5/run_config.json`;
-- `longitudinal_incident_common.py`;
-- the supplementary static-sex robustness design.
+The feature contract was derived from a private thesis workspace. Its remote
+name, internal paths, commit and blob identifiers are intentionally not listed
+in the public repository while research-artifact authorization remains pending.
 
 The source research used aligned Y1/Y2 clinical variables, excluded SE1/SE2 from the predictor set, and evaluated OD/OS targets independently. LongiEye keeps those conceptual boundaries but does not copy participant-level inputs, outputs or checkpoints.
 
 ## Auditable source snapshot
 
-| Source file in private research repository | Git blob SHA |
-| --- | --- |
-| `README.md` | `57769ad88b03ad90f615db76e0a5d0620f399d06` |
-| `clinical_representations_10x5/run_config.json` | `740de855ed32ea3a32d1bcadbe2ff0a5c2c8c131` |
-| `al_delta_ablation_10x5/run_config.json` | `d27d936b522c18bdbdef4591442fd17a87c39a66` |
-| `longitudinal_incident_common.py` | `4dba96f7136e8ee6e5715dfba71319f142d9a848` |
-| `longitudinal_multimodal_models.py` | `58cb4a7e9406a13242bb141b470917e074f440da` |
+The exact source snapshot belongs in an access-controlled evidence registry. A
+Phase B review must bind the private source commit, approved allowlist, aggregate
+result file, calculation script and thesis table to one authorization record.
+Only a non-sensitive reference ID may be copied into a public model card after
+release approval.
 
-These content-addressed blob IDs record exactly which files informed the public contract. Before publishing research metrics in a resume, also pin the private repository commit and map each number to its aggregate result file and thesis table.
+## Current authorization state
+
+The current source metadata, checkpoint and preprocessing-statistics status is `NOT_AUTHORIZED`, and public research mode is disabled.
+
+Any Phase B evaluation must first complete the [research-artifact authorization checklist](RESEARCH_ARTIFACT_AUTHORIZATION.md) and a card based on the [research model-card template](RESEARCH_MODEL_CARD_TEMPLATE.md). Approval for local evaluation does not permit a Git commit, CI upload, container layer, release, screenshot or public demonstration.
+
+Artifact and preprocessing SHA-256 values are integrity identifiers only. They are not digital signatures, proof of ownership, privacy approval or permission to distribute.
 
 ## Explicit exclusions
 
@@ -34,4 +34,4 @@ These content-addressed blob IDs record exactly which files informed the public 
 
 ## Publication gate
 
-Before publishing this repository, confirm institutional ownership and choose an appropriate software license. The absence of a license means others do not automatically receive reuse rights.
+Before adding any research-derived artifact, source identifier or metric, confirm institutional ownership and record the allowed release scope. This repository currently has no software license, so public visibility does not automatically grant reuse rights.

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from .domain import LongitudinalCase
 from .features import extract_features
-from .model import DemoRiskModel
+from .model_contract import RiskModelBackend, validated_scores
 from .telemetry import normalize_request_id
 
 
@@ -14,7 +14,13 @@ DISCLAIMER = (
 
 
 class RiskPredictionService:
-    def __init__(self, model: DemoRiskModel) -> None:
+    def __init__(self, model: RiskModelBackend) -> None:
+        if model.metadata.get("model_stage") != "demo_synthetic":
+            raise ValueError("The public demo service accepts only demo_synthetic")
+        if model.metadata.get("clinical_use") is not False:
+            raise ValueError("The public demo service accepts only non-clinical models")
+        if model.readiness().status != "ready":
+            raise ValueError("The public demo model is not ready")
         self.model = model
 
     def predict(
@@ -24,7 +30,7 @@ class RiskPredictionService:
         request_id: str | None = None,
     ) -> dict[str, object]:
         features = extract_features(case)
-        probabilities = self.model.predict(features)
+        probabilities = validated_scores(self.model.predict(features))
         return {
             "request_id": normalize_request_id(request_id),
             "case_id": case_id,

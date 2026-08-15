@@ -2,13 +2,21 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
-from .features import FEATURE_ORDER, ordered_values
+from .features import FEATURE_ORDER
+from .model_contract import (
+    AdapterReadiness,
+    FEATURE_CONTRACT_VERSION,
+    OUTPUT_CONTRACT_VERSION,
+    validated_feature_values,
+    validated_scores,
+)
 
 
 class ModelConfigError(ValueError):
@@ -22,12 +30,9 @@ def _mapping(value: object, name: str) -> Mapping[str, Any]:
 
 
 def _finite_number(value: object, name: str) -> float:
-    if isinstance(value, bool):
+    if type(value) not in {int, float}:
         raise ModelConfigError(f"{name} must be a finite number")
-    try:
-        converted = float(value)
-    except (TypeError, ValueError) as exc:
-        raise ModelConfigError(f"{name} must be a finite number") from exc
+    converted = float(value)
     if not math.isfinite(converted):
         raise ModelConfigError(f"{name} must be a finite number")
     return converted
@@ -101,17 +106,38 @@ class DemoRiskModel:
                 raise ModelConfigError(f"metadata.{field} must be a non-empty string")
         if self.metadata.get("clinical_use") is not False:
             raise ModelConfigError("metadata.clinical_use must be false")
+        contract_defaults = {
+            "adapter_kind": "json_logistic",
+            "adapter_version": "1",
+            "framework": "python_stdlib",
+            "framework_version": "1",
+            "feature_contract_version": FEATURE_CONTRACT_VERSION,
+            "output_contract_version": OUTPUT_CONTRACT_VERSION,
+        }
+        for field, expected in contract_defaults.items():
+            configured = self.metadata.get(field)
+            if configured != expected or not isinstance(configured, str):
+                raise ModelConfigError(f"metadata.{field} violates the model contract")
+
+        try:
+            self.predict({name: 0.0 for name in FEATURE_ORDER})
+        except (ModelConfigError, ValueError) as exc:
+            raise ModelConfigError("Model self-test failed") from exc
 
     @classmethod
     def from_path(cls, path: str | Path) -> "DemoRiskModel":
         try:
-            with Path(path).open("r", encoding="utf-8") as handle:
-                return cls(json.load(handle))
-        except (OSError, json.JSONDecodeError) as exc:
-            raise ModelConfigError("Unable to load the model artifact") from exc
+            artifact_bytes = Path(path).read_bytes()
+            model = cls(json.loads(artifact_bytes.decode("utf-8")))
+            model.metadata["artifact_sha256"] = hashlib.sha256(
+                artifact_bytes
+            ).hexdigest()
+            return model
+        except (OSError, UnicodeError, json.JSONDecodeError):
+            raise ModelConfigError("Unable to load the model artifact") from None
 
     def predict(self, features: Mapping[str, float]) -> dict[str, float]:
-        values = ordered_values(features)
+        values = validated_feature_values(features)
         standardized = [
             (value - mean) / std
             for value, mean, std in zip(values, self.means, self.stds, strict=True)
@@ -124,4 +150,7 @@ class DemoRiskModel:
                 for weight, value in zip(coefficients, standardized, strict=True)
             )
             output[name] = _sigmoid(logit)
-        return output
+        return validated_scores(output)
+
+    def readiness(self) -> AdapterReadiness:
+        return AdapterReadiness(status="ready", self_test="passed")
