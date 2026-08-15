@@ -8,12 +8,30 @@ import math
 import random
 import sys
 from pathlib import Path
+from typing import Any
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
-
 from longieye.features import FEATURE_ORDER  # noqa: E402
+
+
+ARTIFACT_SIGNIFICANT_DIGITS = 12
+
+
+def canonicalize_artifact_numbers(value: Any) -> Any:
+    """Remove insignificant cross-platform libm noise before JSON serialization."""
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            raise ValueError("Model artifacts cannot contain non-finite numbers")
+        return float(format(value, f".{ARTIFACT_SIGNIFICANT_DIGITS}g"))
+    if isinstance(value, list):
+        return [canonicalize_artifact_numbers(item) for item in value]
+    if isinstance(value, dict):
+        return {
+            key: canonicalize_artifact_numbers(item) for key, item in value.items()
+        }
+    return value
 
 
 def sigmoid(value: float) -> float:
@@ -195,8 +213,12 @@ def main() -> None:
             "clinical_use": False,
         },
     }
+    payload = canonicalize_artifact_numbers(payload)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    serialized = json.dumps(payload, indent=2, allow_nan=False)
+    args.output.write_text(
+        serialized + "\n", encoding="utf-8", newline="\n"
+    )
     print(json.dumps(payload["metadata"], indent=2))
 
 

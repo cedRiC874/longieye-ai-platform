@@ -76,4 +76,4 @@ python -m pytest -q
 python scripts/benchmark_service.py
 ```
 
-The default synthetic seed is `20260815`; regenerated coefficients and metrics should be deterministic on the same Python implementation.
+The default synthetic seed is `20260815`. Artifact floats are serialized to 12 significant digits to remove insignificant platform math-library noise, so supported CI environments regenerate the same versioned JSON artifact.

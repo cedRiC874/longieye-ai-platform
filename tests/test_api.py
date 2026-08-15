@@ -49,7 +49,10 @@ def test_predict_returns_two_eye_result_and_no_clinical_claim():
     body = response.json()
     assert body["case_id"] == "demo-001"
     assert body["clinical_use"] is False
-    assert set(body["predictions"]) == {"od", "os"}
+    assert body["predictions"] == {
+        "od": {"demo_probability": 0.165514},
+        "os": {"demo_probability": 0.12086},
+    }
     assert body["request_id"] == response.headers["X-Request-ID"]
 
 

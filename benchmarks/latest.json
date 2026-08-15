@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-08-15T10:36:43.135565+00:00",
+  "generated_at_utc": "2026-08-15T11:03:51.863524+00:00",
   "model_id": "longieye-synthetic-static-sex-delta8-v0",
-  "model_artifact_sha256": "2b6c7fac04adf08281ef07fa5ddfeef83722c768622e6cf953d0bd916b55a97e",
+  "model_artifact_sha256": "a00a54be7d973b9834b5405e6bdaed512e9ae48186296f2af07793cab6ab3e32",
   "model_stage": "demo_synthetic",
   "clinical_use": false,
   "environment": {
@@ -25,35 +25,35 @@
   "results": [
     {
       "iterations": 5000,
-      "p50_ms": 0.0083,
-      "p95_ms": 0.0089,
-      "p99_ms": 0.012601,
-      "mean_ms": 0.008633,
-      "throughput_requests_per_second": 114052.396,
+      "p50_ms": 0.0082,
+      "p95_ms": 0.0088,
+      "p99_ms": 0.0119,
+      "mean_ms": 0.00834,
+      "throughput_requests_per_second": 118028.36,
       "mode": "core_service",
       "warmup_iterations": 50,
       "errors": 0,
       "memory_iterations": 500,
-      "rss_baseline_mb": 53.570312,
-      "rss_peak_mb": 53.578125,
+      "rss_baseline_mb": 53.769531,
+      "rss_peak_mb": 53.777344,
       "rss_peak_delta_mb": 0.007812,
       "python_tracemalloc_peak_mb": 0.001293
     },
     {
       "iterations": 500,
-      "p50_ms": 1.8629,
-      "p95_ms": 2.631095,
-      "p99_ms": 3.078334,
-      "mean_ms": 1.945592,
-      "throughput_requests_per_second": 513.798,
+      "p50_ms": 1.9212,
+      "p95_ms": 2.573255,
+      "p99_ms": 3.107384,
+      "mean_ms": 1.990667,
+      "throughput_requests_per_second": 502.167,
       "mode": "in_process_asgi",
       "warmup_iterations": 50,
       "errors": 0,
       "memory_iterations": 500,
-      "rss_baseline_mb": 54.902344,
-      "rss_peak_mb": 55.707031,
-      "rss_peak_delta_mb": 0.804688,
-      "python_tracemalloc_peak_mb": 0.393598
+      "rss_baseline_mb": 55.042969,
+      "rss_peak_mb": 56.0625,
+      "rss_peak_delta_mb": 1.019531,
+      "python_tracemalloc_peak_mb": 0.393176
     }
   ]
 }
