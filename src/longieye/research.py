@@ -42,6 +42,7 @@ RESEARCH_LOADER_CONTRACT_VERSION = "research-package-loader-v1"
 MANIFEST_MAX_BYTES = 64 * 1024
 MODEL_CARD_MAX_BYTES = 256 * 1024
 ARTIFACT_MAX_BYTES = 1024 * 1024
+JSON_MAX_NESTING = 64
 FLOAT32_MAX = 3.4028235e38
 ZERO_SHA256 = "0" * 64
 
@@ -184,6 +185,31 @@ def _canonical_sha256(payload: object) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
+def _reject_excessive_json_nesting(raw_bytes: bytes, error_code: str) -> None:
+    """Apply a platform-independent nesting bound before ``json.loads``."""
+
+    depth = 0
+    in_string = False
+    escaped = False
+    for value in raw_bytes:
+        if in_string:
+            if escaped:
+                escaped = False
+            elif value == ord("\\"):
+                escaped = True
+            elif value == ord('"'):
+                in_string = False
+            continue
+        if value == ord('"'):
+            in_string = True
+        elif value in (ord("["), ord("{")):
+            depth += 1
+            if depth > JSON_MAX_NESTING:
+                raise ResearchArtifactError(error_code)
+        elif value in (ord("]"), ord("}")):
+            depth = max(0, depth - 1)
+
+
 def preprocessing_sha256(
     means: Sequence[float], stds: Sequence[float]
 ) -> str:
@@ -313,6 +339,7 @@ class ExternalJsonApprovalPolicy:
                 MANIFEST_MAX_BYTES,
                 unreadable_code="approval_invalid",
             )
+            _reject_excessive_json_nesting(raw_bytes, "approval_invalid")
             raw = json.loads(raw_bytes.decode("utf-8"))
             if not isinstance(raw, Mapping):
                 raise ResearchArtifactError("approval_invalid")
@@ -566,6 +593,7 @@ class ResearchManifest:
     @classmethod
     def from_bytes(cls, raw_bytes: bytes) -> "ResearchManifest":
         try:
+            _reject_excessive_json_nesting(raw_bytes, "manifest_unreadable")
             raw = json.loads(raw_bytes.decode("utf-8"))
         except (UnicodeError, ValueError, RecursionError, json.JSONDecodeError):
             raise ResearchArtifactError("manifest_unreadable") from None
