@@ -22,13 +22,13 @@ LongiEye 是一个面向作品集的、隐私优先的纵向近视风险建模�
 - FastAPI `/health`、`/ready` 与 `/predict` 端点。
 - 统一错误响应、端到端请求 ID 和隐私安全的 JSON 日志。
 - P50/P95/P99、顺序吞吐量、进程 RSS 与 Python 峰值内存基准。
-- 70+项测试、锁定依赖，以及已配置的 Dockerfile 和 GitHub Actions CI。
+- 79 项测试（含可选 PyTorch 适配测试）、锁定依赖，以及已配置的 Dockerfile 和 GitHub Actions CI。
 
 ## Sprint 2：研究模型适配边界
 
 Sprint 2 的目标是证明“用于接入经授权研究模型”的 adapter、manifest、完整性校验和黄金向量自检流程可以运行。当前没有转换或部署真实研究 checkpoint；公开服务的非临床语义保持不变。
 
-Phase A 的本地实现已完成；只有当前提交的 GitHub Actions 默认矩阵和独立 PyTorch job 全部绿色后，才记为完成。Phase B 仍因真实工件未授权而关闭。
+Phase A 的实现与 GitHub Actions 验证均已完成。Phase B 仍因真实工件未授权而关闭。
 
 研究工件的默认状态是 **未授权**。公开仓库不得包含真实 checkpoint、预处理统计、受试者记录、拆分 ID、逐人预测或 OOF 输出。即使本地存在经过授权的研究工件，公开 `/predict` 仍只运行合成 JSON 模型；研究适配与比较在隔离的离线路径中完成。
 

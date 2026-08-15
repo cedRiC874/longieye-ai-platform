@@ -21,7 +21,7 @@ The actual screen recording remains a manual portfolio step so the owner can nar
 
 Sprint 2 keeps the public `/predict` path on the deterministic synthetic JSON model. It builds an auditable adapter boundary first; it does not publish or activate a private research checkpoint by default.
 
-### Phase A — public adapter foundation (local implementation complete; CI pending)
+### Phase A — public adapter foundation (completed)
 
 Phase A must remain reproducible without any private research artifact:
 
@@ -34,7 +34,7 @@ Phase A must remain reproducible without any private research artifact:
 - The generic comparison builder reports only already-loaded contract/runtime evidence, explicitly says that it does not verify authorization itself, and leaves both synthetic sanity and authorized research metric namespaces unavailable. The standard CLI calls it only after the package gate.
 - The public API remains pinned to the synthetic JSON backend; no environment switch can silently enable research mode.
 
-Local default validation currently reports `74 passed, 5 skipped`; the five optional PyTorch tests are configured to become mandatory in the dedicated GitHub Actions job. Phase A becomes fully complete only after that job is green on the pushed commit.
+Local validation reports `79 passed` when the optional PyTorch runtime is installed. GitHub Actions also verifies the default Python 3.10/3.11/3.12 matrix, deterministic Windows artifact generation, wheel isolation and the mandatory PyTorch adapter suite. Phase A is complete.
 
 Phase A proves adapter engineering. It does not prove that a real checkpoint was exported correctly and does not establish clinical performance.
 
