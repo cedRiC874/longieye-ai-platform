@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+  <title id="title">LongiEye Sprint 1 architecture</title>
+  <desc id="desc">A privacy-safe request passes through tracing, validation, feature extraction, a versioned synthetic model, and a labelled response.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .box { fill: #ffffff; stroke: #334155; stroke-width: 2; rx: 16; }
+      .accent { fill: #eff6ff; stroke: #2563eb; stroke-width: 2; rx: 16; }
+      .safe { fill: #ecfdf5; stroke: #059669; stroke-width: 2; rx: 16; }
+      .text { font: 600 19px system-ui, sans-serif; fill: #0f172a; text-anchor: middle; }
+      .small { font: 14px system-ui, sans-serif; fill: #475569; text-anchor: middle; }
+      .arrow { stroke: #64748b; stroke-width: 3; fill: none; marker-end: url(#head); }
+    </style>
+    <marker id="head" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1200" height="360"/>
+  <text x="600" y="45" class="text" style="font-size:26px">LongiEye — privacy-first inference path</text>
+  <rect x="35" y="115" width="190" height="120" class="box"/>
+  <text x="130" y="157" class="text">Y1/Y2 request</text>
+  <text x="130" y="185" class="small">No direct identifiers</text>
+  <text x="130" y="207" class="small">Optional safe trace ID</text>
+  <rect x="270" y="115" width="190" height="120" class="accent"/>
+  <text x="365" y="157" class="text">API boundary</text>
+  <text x="365" y="185" class="small">Validation + errors</text>
+  <text x="365" y="207" class="small">Structured telemetry</text>
+  <rect x="505" y="115" width="190" height="120" class="box"/>
+  <text x="600" y="157" class="text">Feature contract</text>
+  <text x="600" y="185" class="small">Static sex + delta8</text>
+  <text x="600" y="207" class="small">SE predictors excluded</text>
+  <rect x="740" y="115" width="190" height="120" class="accent"/>
+  <text x="835" y="157" class="text">Model adapter</text>
+  <text x="835" y="185" class="small">Versioned JSON artifact</text>
+  <text x="835" y="207" class="small">Synthetic two-eye heads</text>
+  <rect x="975" y="115" width="190" height="120" class="safe"/>
+  <text x="1070" y="157" class="text">Safe response</text>
+  <text x="1070" y="185" class="small">OD/OS demo scores</text>
+  <text x="1070" y="207" class="small">clinical_use = false</text>
+  <path d="M225 175 H262" class="arrow"/>
+  <path d="M460 175 H497" class="arrow"/>
+  <path d="M695 175 H732" class="arrow"/>
+  <path d="M930 175 H967" class="arrow"/>
+  <text x="600" y="300" class="small">Logs contain request metadata only — never clinical values or request bodies</text>
+</svg>

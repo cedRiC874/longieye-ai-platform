@@ -1,0 +1,1 @@
+"""LongiEye web application."""

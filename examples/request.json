@@ -1,0 +1,26 @@
+{
+  "case_id": "demo-001",
+  "followup_months": 12,
+  "y1": {
+    "sex_code": 0,
+    "height_cm": 145.0,
+    "weight_kg": 38.0,
+    "sbp_mmhg": 105.0,
+    "dbp_mmhg": 68.0,
+    "waist_cm": 62.0,
+    "wears_glasses": 0,
+    "axial_length_od_mm": 23.5,
+    "axial_length_os_mm": 23.45
+  },
+  "y2": {
+    "sex_code": 0,
+    "height_cm": 151.0,
+    "weight_kg": 43.0,
+    "sbp_mmhg": 108.0,
+    "dbp_mmhg": 70.0,
+    "waist_cm": 65.0,
+    "wears_glasses": 1,
+    "axial_length_od_mm": 23.82,
+    "axial_length_os_mm": 23.74
+  }
+}

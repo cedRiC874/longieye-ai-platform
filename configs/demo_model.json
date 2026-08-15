@@ -1,0 +1,96 @@
+{
+  "feature_order": [
+    "sex_y1",
+    "height_delta_cm",
+    "weight_delta_kg",
+    "sbp_delta_mmhg",
+    "dbp_delta_mmhg",
+    "waist_delta_cm",
+    "wears_glasses_delta",
+    "axial_length_od_delta_mm",
+    "axial_length_os_delta_mm"
+  ],
+  "normalization": {
+    "mean": [
+      0.523125,
+      4.987215224864878,
+      4.022386988048975,
+      2.134529834938127,
+      0.9882023236762549,
+      3.045153793986734,
+      0.206875,
+      0.2273444026327116,
+      0.21455342739101335
+    ],
+    "std": [
+      0.49946494809445835,
+      2.4201401190821414,
+      2.799001918319263,
+      6.933511720402177,
+      5.04117552446788,
+      3.52893313474129,
+      0.5247168135051515,
+      0.11555369222060081,
+      0.1197334704368442
+    ]
+  },
+  "heads": {
+    "od": {
+      "intercept": -2.358223314453567,
+      "coefficients": [
+        0.06835298605814333,
+        0.03891484984775282,
+        -0.1202038790038074,
+        0.14725998716523656,
+        -0.0928573535182003,
+        -0.009714111045765346,
+        0.10780715861229184,
+        0.6268696202232327,
+        0.2734140757561222
+      ]
+    },
+    "os": {
+      "intercept": -2.519609112796707,
+      "coefficients": [
+        0.14705078352529757,
+        -0.039851024382606334,
+        0.121770939140531,
+        0.07822640965834433,
+        0.0007539422748880926,
+        0.06738803996955531,
+        0.11425649462441792,
+        0.15909746155467802,
+        0.5620068026079367
+      ]
+    }
+  },
+  "metadata": {
+    "model_id": "longieye-synthetic-static-sex-delta8-v0",
+    "model_stage": "demo_synthetic",
+    "training_data": "deterministic synthetic data only",
+    "synthetic_seed": 20260815,
+    "training_samples": 1600,
+    "validation_samples": 400,
+    "validation_metrics": {
+      "od": {
+        "auc": 0.7019774011299436,
+        "brier": 0.09614327311211567
+      },
+      "os": {
+        "auc": 0.6167136150234742,
+        "brier": 0.09915820796494718
+      }
+    },
+    "validation_reference": {
+      "od": {
+        "positive_rate": 0.115,
+        "constant_probability_brier": 0.101775
+      },
+      "os": {
+        "positive_rate": 0.1125,
+        "constant_probability_brier": 0.09984375
+      }
+    },
+    "clinical_use": false
+  }
+}

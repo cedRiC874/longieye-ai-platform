@@ -1,0 +1,20 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.env
+dist/
+build/
+*.egg-info/
+
+# Never commit research data, checkpoints, or participant-level outputs.
+data/
+checkpoints/
+artifacts/private/
+*.pth
+*.pt
+*.ckpt
+*.xlsx
+*.xls
