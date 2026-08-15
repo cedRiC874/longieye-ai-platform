@@ -8,12 +8,12 @@ from math import isfinite
 
 def _bounded(name: str, value: float, lower: float, upper: float) -> None:
     if not isfinite(float(value)) or not lower <= float(value) <= upper:
-        raise ValueError(f"{name} must be between {lower} and {upper}")
+        raise ValueError(f"`{name}` 必须在 {lower} 到 {upper} 之间。")
 
 
 def _binary(name: str, value: int) -> None:
     if value not in (0, 1):
-        raise ValueError(f"{name} must be encoded as 0 or 1")
+        raise ValueError(f"`{name}` 必须编码为 0 或 1。")
 
 
 @dataclass(frozen=True)
@@ -56,6 +56,6 @@ class LongitudinalCase:
 
     def __post_init__(self) -> None:
         if self.y1.sex_code != self.y2.sex_code:
-            raise ValueError("sex_code must remain static between Y1 and Y2")
+            raise ValueError("`sex_code` 在 Y1 与 Y2 之间必须保持不变。")
         if self.followup_months != 12:
-            raise ValueError("the demo feature contract requires a 12-month follow-up")
+            raise ValueError("演示特征契约要求两次随访间隔为12个月。")

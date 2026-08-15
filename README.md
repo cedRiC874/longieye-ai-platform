@@ -4,7 +4,7 @@ LongiEye 是一个面向作品集的、隐私优先的纵向近视风险建模�
 
 > 当前 `v0.2.0` 仅使用确定性生成的合成数据训练演示模型。输出不是医疗结论，不能用于诊断、筛查或治疗决策。
 
-![LongiEye architecture](docs/assets/architecture.svg)
+![LongiEye 系统架构图](docs/assets/architecture.svg)
 
 ## 为什么值得放进作品集
 
@@ -22,7 +22,7 @@ LongiEye 是一个面向作品集的、隐私优先的纵向近视风险建模�
 - FastAPI `/health`、`/ready` 与 `/predict` 端点。
 - 统一错误响应、端到端请求 ID 和隐私安全的 JSON 日志。
 - P50/P95/P99、顺序吞吐量、进程 RSS 与 Python 峰值内存基准。
-- 21项测试、锁定依赖，以及已配置的 Dockerfile 和 GitHub Actions CI。
+- 29项测试、锁定依赖，以及已配置的 Dockerfile 和 GitHub Actions CI。
 
 ## 快速开始
 
@@ -33,7 +33,7 @@ python -m pytest -q
 uvicorn app.main:app --reload
 ```
 
-访问 `http://127.0.0.1:8000/docs`，或发送示例请求：
+访问 `http://127.0.0.1:8000/docs` 查看中文接口说明，或发送示例请求。HTTP 路径和 JSON 字段名保留英文，以维持稳定的机器合同：
 
 ```powershell
 Invoke-RestMethod -Method Post `
@@ -45,10 +45,12 @@ Invoke-RestMethod -Method Post `
 也可以直接运行不依赖 Web 框架的命令行演示：
 
 ```powershell
-python scripts/run_demo.py
+python scripts/run_demo.py --human
 ```
 
-仓库已包含可运行的合成模型 artifact；启动服务不需要重新训练。要验证模型生成的确定性，可运行：
+默认不加 `--human` 时仍输出适合程序解析的原始 JSON。
+
+仓库已包含可运行的合成模型制品（artifact）；启动服务不需要重新训练。要验证模型生成的确定性，可运行：
 
 ```powershell
 python scripts/train_demo_model.py
@@ -113,8 +115,8 @@ tests/               核心单元测试
 
 | 路径 | 迭代 | P50 | P95 | P99 | 顺序吞吐量 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Core service | 5,000 | 0.008 ms | 0.009 ms | 0.013 ms | 114,052.4 req/s |
-| In-process ASGI | 500 | 1.863 ms | 2.631 ms | 3.078 ms | 513.8 req/s |
+| 核心服务（core_service） | 5,000 | 0.009 ms | 0.015 ms | 0.020 ms | 99,169.4 req/s |
+| 进程内 ASGI（in_process_asgi） | 500 | 2.497 ms | 3.902 ms | 4.704 ms | 371.5 req/s |
 
 完整的环境、内存定义和限制见 [基准报告](benchmarks/latest.md)。这些是合成模型的工程指标，不是医疗效果指标。
 

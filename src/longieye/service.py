@@ -9,7 +9,7 @@ from .telemetry import normalize_request_id
 
 
 DISCLAIMER = (
-    "Synthetic engineering demonstration only; not validated for clinical use."
+    "仅用于合成数据工程演示，未经临床验证，不可用于诊断、筛查或治疗决策。"
 )
 
 

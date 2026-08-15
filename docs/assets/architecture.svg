@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
-  <title id="title">LongiEye Sprint 1 architecture</title>
-  <desc id="desc">A privacy-safe request passes through tracing, validation, feature extraction, a versioned synthetic model, and a labelled response.</desc>
+  <title id="title">LongiEye Sprint 1 系统架构图</title>
+  <desc id="desc">脱敏请求依次经过追踪、校验、特征提取、版本化合成模型和安全标记响应。</desc>
   <defs>
     <style>
       .bg { fill: #f8fafc; }
@@ -16,30 +16,30 @@
     </marker>
   </defs>
   <rect class="bg" width="1200" height="360"/>
-  <text x="600" y="45" class="text" style="font-size:26px">LongiEye — privacy-first inference path</text>
+  <text x="600" y="45" class="text" style="font-size:26px">LongiEye — 隐私优先推理流程</text>
   <rect x="35" y="115" width="190" height="120" class="box"/>
-  <text x="130" y="157" class="text">Y1/Y2 request</text>
-  <text x="130" y="185" class="small">No direct identifiers</text>
-  <text x="130" y="207" class="small">Optional safe trace ID</text>
+  <text x="130" y="157" class="text">Y1/Y2 请求</text>
+  <text x="130" y="185" class="small">不含直接身份标识</text>
+  <text x="130" y="207" class="small">可选安全追踪 ID</text>
   <rect x="270" y="115" width="190" height="120" class="accent"/>
-  <text x="365" y="157" class="text">API boundary</text>
-  <text x="365" y="185" class="small">Validation + errors</text>
-  <text x="365" y="207" class="small">Structured telemetry</text>
+  <text x="365" y="157" class="text">API 边界</text>
+  <text x="365" y="185" class="small">校验与错误处理</text>
+  <text x="365" y="207" class="small">结构化遥测</text>
   <rect x="505" y="115" width="190" height="120" class="box"/>
-  <text x="600" y="157" class="text">Feature contract</text>
-  <text x="600" y="185" class="small">Static sex + delta8</text>
-  <text x="600" y="207" class="small">SE predictors excluded</text>
+  <text x="600" y="157" class="text">特征契约</text>
+  <text x="600" y="185" class="small">静态性别 + 8项变化量</text>
+  <text x="600" y="207" class="small">排除球镜等效特征</text>
   <rect x="740" y="115" width="190" height="120" class="accent"/>
-  <text x="835" y="157" class="text">Model adapter</text>
-  <text x="835" y="185" class="small">Versioned JSON artifact</text>
-  <text x="835" y="207" class="small">Synthetic two-eye heads</text>
+  <text x="835" y="157" class="text">模型适配器</text>
+  <text x="835" y="185" class="small">版本化 JSON 制品</text>
+  <text x="835" y="207" class="small">合成双眼模型头</text>
   <rect x="975" y="115" width="190" height="120" class="safe"/>
-  <text x="1070" y="157" class="text">Safe response</text>
-  <text x="1070" y="185" class="small">OD/OS demo scores</text>
+  <text x="1070" y="157" class="text">安全响应</text>
+  <text x="1070" y="185" class="small">OD/OS 演示分数</text>
   <text x="1070" y="207" class="small">clinical_use = false</text>
   <path d="M225 175 H262" class="arrow"/>
   <path d="M460 175 H497" class="arrow"/>
   <path d="M695 175 H732" class="arrow"/>
   <path d="M930 175 H967" class="arrow"/>
-  <text x="600" y="300" class="small">Logs contain request metadata only — never clinical values or request bodies</text>
+  <text x="600" y="300" class="small">日志只记录请求元数据，不记录临床数值或请求体</text>
 </svg>

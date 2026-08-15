@@ -150,48 +150,64 @@ async def benchmark_api(
 
 
 def markdown_report(report: dict[str, object]) -> str:
+    mode_labels = {
+        "core_service": "核心服务（core_service）",
+        "in_process_asgi": "进程内 ASGI（in_process_asgi）",
+    }
     rows = []
     for result in report["results"]:
         rows.append(
-            "| {mode} | {iterations} | {p50_ms:.3f} | {p95_ms:.3f} | "
+            "| {mode_label} | {iterations} | {p50_ms:.3f} | {p95_ms:.3f} | "
             "{p99_ms:.3f} | {throughput_requests_per_second:.1f} | "
             "{rss_peak_delta_mb:.3f} | {python_tracemalloc_peak_mb:.3f} |".format(
+                mode_label=mode_labels.get(result["mode"], result["mode"]),
                 **result
             )
         )
     return "\n".join(
         [
-            "# LongiEye local benchmark",
+            "# LongiEye 本机基准",
             "",
-            f"Generated: `{report['generated_at_utc']}`",
-            f"Model: `{report['model_id']}`",
-            f"Artifact SHA-256: `{report['model_artifact_sha256']}`",
+            f"生成时间：`{report['generated_at_utc']}`",
+            f"模型：`{report['model_id']}`",
+            f"模型制品 SHA-256：`{report['model_artifact_sha256']}`",
             f"Python: `{report['environment']['python']}`",
-            f"Platform: `{report['environment']['platform']}`",
+            f"运行平台：`{report['environment']['platform']}`",
             "",
-            "| Mode | Iterations | P50 ms | P95 ms | P99 ms | Requests/s | RSS delta MB | Python peak MB |",
+            "| 测量路径 | 迭代次数 | P50 ms | P95 ms | P99 ms | 每秒请求数 | RSS 增量 MB | Python 峰值 MB |",
             "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
             *rows,
             "",
-            "`core_service` measures feature extraction, inference and response assembly.",
-            "`in_process_asgi` additionally measures validation, middleware and JSON handling.",
-            "Both modes run in one process and exclude network, proxy and container overhead.",
-            "Timing runs with memory tracing disabled; memory is measured in a separate loop.",
-            "RSS is sampled from the process and Python peak uses `tracemalloc`.",
-            "These are local engineering measurements for a synthetic model, not clinical metrics.",
+            "`core_service` 测量特征提取、模型推理和响应组装。",
+            "`in_process_asgi` 还包含请求校验、中间件和 JSON 处理。",
+            "两种模式均在单进程内顺序运行，不包含网络、反向代理和容器开销。",
+            "延迟计时阶段关闭内存追踪；内存数据在独立循环中测量。",
+            "RSS 来自进程采样，Python 峰值使用 `tracemalloc` 测量。",
+            "这些是合成模型的本机工程测量结果，不是临床性能指标。",
             "",
         ]
     )
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--warmup", type=int, default=50)
-    parser.add_argument("--core-iterations", type=int, default=5000)
-    parser.add_argument("--api-iterations", type=int, default=500)
-    parser.add_argument("--memory-iterations", type=int, default=500)
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+    parser = argparse.ArgumentParser(description="运行 LongiEye 本机工程基准。")
+    parser.add_argument("--warmup", type=int, default=50, help="预热迭代次数。")
     parser.add_argument(
-        "--output-dir", type=Path, default=PROJECT_ROOT / "benchmarks"
+        "--core-iterations", type=int, default=5000, help="核心服务计时次数。"
+    )
+    parser.add_argument(
+        "--api-iterations", type=int, default=500, help="进程内 API 计时次数。"
+    )
+    parser.add_argument(
+        "--memory-iterations", type=int, default=500, help="内存测量迭代次数。"
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=PROJECT_ROOT / "benchmarks",
+        help="报告输出目录。",
     )
     args = parser.parse_args()
     if min(
@@ -200,7 +216,7 @@ def main() -> None:
         args.api_iterations,
         args.memory_iterations,
     ) < 1:
-        raise ValueError("All iteration counts must be positive")
+        raise ValueError("所有迭代次数都必须为正整数。")
 
     payload = load_payload()
     case = payload_to_case(payload)
@@ -248,10 +264,10 @@ def main() -> None:
     }
     args.output_dir.mkdir(parents=True, exist_ok=True)
     (args.output_dir / "latest.json").write_text(
-        json.dumps(report, indent=2), encoding="utf-8"
+        json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n"
     )
     (args.output_dir / "latest.md").write_text(
-        markdown_report(report), encoding="utf-8"
+        markdown_report(report), encoding="utf-8", newline="\n"
     )
     print(markdown_report(report))
 

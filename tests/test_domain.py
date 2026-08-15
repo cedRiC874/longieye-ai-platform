@@ -25,7 +25,7 @@ class DomainTests(unittest.TestCase):
             visit(axial_length_od_mm=42.0)
 
     def test_rejects_sex_change_between_visits(self):
-        with self.assertRaisesRegex(ValueError, "sex_code must remain static"):
+        with self.assertRaisesRegex(ValueError, "必须保持不变"):
             LongitudinalCase(y1=visit(sex_code=0), y2=visit(sex_code=1))
 
 

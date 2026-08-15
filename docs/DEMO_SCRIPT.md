@@ -1,24 +1,28 @@
-# One-minute portfolio demo script
+# 一分钟作品集演示脚本
 
-## Before recording
+## 录制前准备
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --reload
 ```
 
-Open `http://127.0.0.1:8000/docs` and keep `benchmarks/latest.md` ready in another tab.
+打开 `http://127.0.0.1:8000/docs`，并在另一个标签页准备好 `benchmarks/latest.md`。如果需要命令行画面，可运行：
 
-## 60-second narration
+```powershell
+.\.venv\Scripts\python.exe scripts\run_demo.py --human
+```
 
-**0–10 seconds:** “LongiEye turns my longitudinal myopia research into a privacy-safe engineering demo. The public service contains no participant data or research checkpoint.”
+## 60秒中文解说
 
-**10–25 seconds:** Show `/predict`. “The request contains two visits. The domain layer validates physiological ranges and derives static sex plus eight changes; spherical equivalent and identifiers are excluded.”
+**0–10秒：** “LongiEye 将我的纵向近视研究整理成一个隐私安全的工程演示。公开服务不包含受试者数据，也不包含研究模型检查点。”
 
-**25–38 seconds:** Execute the example. “The response carries one trace ID across the header, JSON body and structured logs. Every result is labelled synthetic and not for clinical use.”
+**10–25秒：** 展示 `/predict`。“请求包含两个相隔12个月的随访时间点。领域层会校验输入范围，并提取静态性别编码和八项纵向变化量；球镜等效值和身份标识被明确排除。”
 
-**38–50 seconds:** Show the error example. “Invalid input returns a stable error code without echoing the submitted value, which reduces accidental sensitive-data exposure.”
+**25–38秒：** 执行示例请求。“同一个请求 ID 会贯穿响应头、JSON 响应和结构化日志。所有输出都明确标记为合成演示结果，不可用于临床。”
 
-**50–60 seconds:** Show the benchmark. “The repository includes repeatable P50/P95/P99 and memory measurements, tests, CI and a model card. The next adapter can replace the synthetic backend without changing the API.”
+**38–50秒：** 展示错误示例。“非法输入会返回稳定的错误码，但不会回显用户提交的值，从而降低敏感信息意外暴露的风险。”
 
-Do not present the synthetic AUC or returned scores as medical evidence. Record the demo only after confirming that the screen contains no private repository paths or personal notifications.
+**50–60秒：** 展示基准报告。“仓库包含可复现的 P50、P95、P99 延迟与内存基准、自动化测试、持续集成和模型卡。未来可以替换合成模型后端，而无需改变公开 API。”
+
+不要把合成 AUC 或接口返回的演示分数当作医疗证据。录制前确认画面中没有私有仓库路径、个人通知或其他敏感信息。

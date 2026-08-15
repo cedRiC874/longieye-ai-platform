@@ -1,19 +1,19 @@
-# LongiEye local benchmark
+# LongiEye 本机基准
 
-Generated: `2026-08-15T11:03:51.863524+00:00`
-Model: `longieye-synthetic-static-sex-delta8-v0`
-Artifact SHA-256: `a00a54be7d973b9834b5405e6bdaed512e9ae48186296f2af07793cab6ab3e32`
+生成时间：`2026-08-15T11:14:08.694525+00:00`
+模型：`longieye-synthetic-static-sex-delta8-v0`
+模型制品 SHA-256：`a00a54be7d973b9834b5405e6bdaed512e9ae48186296f2af07793cab6ab3e32`
 Python: `3.12.13`
-Platform: `Windows-11-10.0.26200-SP0`
+运行平台：`Windows-11-10.0.26200-SP0`
 
-| Mode | Iterations | P50 ms | P95 ms | P99 ms | Requests/s | RSS delta MB | Python peak MB |
+| 测量路径 | 迭代次数 | P50 ms | P95 ms | P99 ms | 每秒请求数 | RSS 增量 MB | Python 峰值 MB |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| core_service | 5000 | 0.008 | 0.009 | 0.012 | 118028.4 | 0.008 | 0.001 |
-| in_process_asgi | 500 | 1.921 | 2.573 | 3.107 | 502.2 | 1.020 | 0.393 |
+| 核心服务（core_service） | 5000 | 0.009 | 0.015 | 0.020 | 99169.4 | 0.012 | 0.001 |
+| 进程内 ASGI（in_process_asgi） | 500 | 2.497 | 3.902 | 4.704 | 371.5 | 0.801 | 0.394 |
 
-`core_service` measures feature extraction, inference and response assembly.
-`in_process_asgi` additionally measures validation, middleware and JSON handling.
-Both modes run in one process and exclude network, proxy and container overhead.
-Timing runs with memory tracing disabled; memory is measured in a separate loop.
-RSS is sampled from the process and Python peak uses `tracemalloc`.
-These are local engineering measurements for a synthetic model, not clinical metrics.
+`core_service` 测量特征提取、模型推理和响应组装。
+`in_process_asgi` 还包含请求校验、中间件和 JSON 处理。
+两种模式均在单进程内顺序运行，不包含网络、反向代理和容器开销。
+延迟计时阶段关闭内存追踪；内存数据在独立循环中测量。
+RSS 来自进程采样，Python 峰值使用 `tracemalloc` 测量。
+这些是合成模型的本机工程测量结果，不是临床性能指标。

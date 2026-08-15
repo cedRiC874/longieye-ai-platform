@@ -53,6 +53,9 @@ def test_predict_returns_two_eye_result_and_no_clinical_claim():
         "od": {"demo_probability": 0.165514},
         "os": {"demo_probability": 0.12086},
     }
+    assert body["disclaimer"] == (
+        "仅用于合成数据工程演示，未经临床验证，不可用于诊断、筛查或治疗决策。"
+    )
     assert body["request_id"] == response.headers["X-Request-ID"]
 
 
@@ -63,7 +66,7 @@ def test_predict_rejects_inconsistent_static_sex():
     assert response.status_code == 422
     body = response.json()
     assert body["error"]["code"] == "domain_validation_error"
-    assert "sex_code must remain static" in body["error"]["message"]
+    assert "必须保持不变" in body["error"]["message"]
     assert body["request_id"] == response.headers["X-Request-ID"]
 
 
@@ -86,7 +89,9 @@ def test_validation_error_is_structured_and_does_not_echo_input():
     body = response.json()
     assert response.status_code == 422
     assert body["error"]["code"] == "request_validation_error"
+    assert body["error"]["message"] == "请求参数校验失败。"
     assert body["error"]["details"][0]["location"] == ["body", "y1", "height_cm"]
+    assert body["error"]["details"][0]["message"] == "该字段必须是数字。"
     assert "do-not-echo-this-value" not in response.text
 
 
@@ -110,12 +115,27 @@ def test_case_alias_and_followup_contract_are_strict():
 
 def test_openapi_publishes_success_and_error_contracts():
     schema = api_request("GET", "/openapi.json").json()
+    assert schema["info"]["title"] == "LongiEye AI Platform｜纵向近视建模工程演示"
     predict_operation = schema["paths"]["/predict"]["post"]
+    assert predict_operation["summary"] == "生成双眼合成演示结果"
     assert "PredictionResponse" in json.dumps(predict_operation["responses"]["200"])
     assert "ErrorResponse" in json.dumps(predict_operation["responses"]["422"])
     assert "ErrorResponse" in json.dumps(predict_operation["responses"]["500"])
+    case_description = schema["components"]["schemas"]["PredictionRequest"][
+        "properties"
+    ]["case_id"]["description"]
+    assert "不得填写姓名" in case_description
 
     payload = request_payload()
     payload["followup_months"] = 6
     response = api_request("POST", "/predict", json=payload)
     assert response.status_code == 422
+
+
+def test_unknown_route_returns_chinese_safe_error():
+    response = api_request("GET", "/not-a-route")
+    assert response.status_code == 404
+    assert response.json()["error"] == {
+        "code": "http_error",
+        "message": "请求处理失败。",
+    }

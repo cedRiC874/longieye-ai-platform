@@ -31,7 +31,7 @@ Every HTTP response includes `X-Request-ID`. A caller may provide a value contai
 The JSON log contains method, path, status, duration, model ID and request ID. Request bodies, clinical values and `case_id` are intentionally not logged.
 
 ```json
-{"level":"INFO","message":"HTTP request completed","request_id":"demo-001","event":"http_request_completed","http_method":"POST","http_path":"/predict","status_code":200,"duration_ms":1.234}
+{"level":"INFO","message":"HTTP 请求处理完成","request_id":"demo-001","event":"http_request_completed","http_method":"POST","http_path":"/predict","status_code":200,"duration_ms":1.234}
 ```
 
 ## Error contract
@@ -41,11 +41,11 @@ The JSON log contains method, path, status, duration, model ID and request ID. R
   "request_id": "trace-id",
   "error": {
     "code": "request_validation_error",
-    "message": "Request validation failed.",
+    "message": "请求参数校验失败。",
     "details": [
       {
         "location": ["body", "y1", "height_cm"],
-        "message": "Input should be a valid number",
+        "message": "该字段必须是数字。",
         "type": "float_parsing"
       }
     ]
