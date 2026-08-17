@@ -34,7 +34,7 @@ Phase A must remain reproducible without any private research artifact:
 - The generic comparison builder reports only already-loaded contract/runtime evidence, explicitly says that it does not verify authorization itself, and leaves both synthetic sanity and authorized research metric namespaces unavailable. The standard CLI calls it only after the package gate.
 - The public API remains pinned to the synthetic JSON backend; no environment switch can silently enable research mode.
 
-Local validation reports `79 passed` when the optional PyTorch runtime is installed. GitHub Actions also verifies the default Python 3.10/3.11/3.12 matrix, deterministic Windows artifact generation, wheel isolation and the mandatory PyTorch adapter suite. Phase A is complete.
+The Sprint 2 baseline reported `79 passed` with the optional PyTorch runtime. The current v0.4 suite reports `145 passed`, including the unchanged research-adapter contract. GitHub Actions verifies the default Python 3.10/3.11/3.12 matrix, deterministic Windows artifacts, wheel isolation and the mandatory PyTorch adapter suite. Phase A remains complete.
 
 Phase A proves adapter engineering. It does not prove that a real checkpoint was exported correctly and does not establish clinical performance.
 
@@ -52,9 +52,18 @@ Phase B starts only after [the research-artifact authorization checklist](RESEAR
 
 Local-use approval does not authorize a GitHub commit, container image, CI artifact, release upload, screenshot or public demonstration. SHA-256 is an integrity check, not a digital signature, source attestation or release authorization.
 
-## Sprint 3 — multimodal extension
+## Sprint 3 — synthetic multimodal extension (completed)
 
-- Add a public or fully synthetic fundus image example.
-- Implement image preprocessing and quality checks.
-- Add an image encoder interface and clinical-anchored fusion adapter.
-- Benchmark fallback behavior when the image branch is unavailable.
+Sprint 3A adds a fully synthetic, offline-only image branch without changing the public `/predict` request or response contract:
+
+- Two 128×128 OD/OS fundus-like fixtures are generated entirely by fixed integer drawing code and carry visible `SYNTHETIC` watermarks. No patient image or public medical dataset is used.
+- A standard-library canonical PNG codec accepts only RGB8, exact `IHDR → IDAT → IEND` inventory, fixed dimensions, bounded decompression, filter 0, valid CRCs and no metadata.
+- File and pixel SHA-256 registries bind each tracked fixture to its eye. Untrusted eye labels, duplicate images, swapped preprocessing and arbitrary raster artifacts fail closed.
+- The engineering quality gate checks brightness, contrast, clipping, field coverage and sharpness before deterministic 32×32 area pooling.
+- `ImageEncoder` and `DeterministicFundusEncoder` demonstrate the adapter boundary with five inspectable statistics; there is no learned visual representation and no training claim.
+- `StructuredAnchoredFusionAdapter` adds a maximum `0.35` logit residual per eye. Missing or rejected images fall back bit-for-bit to the existing structured score; provenance conflict rejects the whole request.
+- A current-request failure is isolated per eye, then locks the image component not-ready for later requests. Outputs expose branch mode and safe reason codes, never paths, hashes, pixels or embeddings.
+- The generic public HTTP path still rejects image, path, URL and Base64 fields. The multimodal stage is not accepted by `RiskPredictionService`.
+- Local aggregate benchmarks cover both images, one missing image and both missing images without persisting per-case outputs or model-quality metrics.
+
+Sprint 3A proves image-contract engineering, graceful degradation and synthetic provenance controls. It does not prove that a CNN was trained, that multimodal prediction is better, or that any image path is clinically valid. Real-image work requires a new authorization and model contract rather than reinterpreting this synthetic fixture boundary.

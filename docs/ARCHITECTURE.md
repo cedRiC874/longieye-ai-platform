@@ -54,6 +54,29 @@ Phase B may evaluate an approved research export only in the location and scope 
 
 An empty or unauthorized research section stays explicitly unavailable. Values from another experiment or from the synthetic model must never be copied into it. SHA-256 verifies byte-level integrity only; authorization trust comes from the external policy/receipt location, which is still not a digital signature unless an institutional signer is implemented.
 
+## Sprint 3 synthetic multimodal boundary
+
+```mermaid
+flowchart LR
+    A["Y1/Y2 structured features"] --> B["Existing synthetic structured model"]
+    B --> C["Per-eye structured anchor"]
+    D["Canonical synthetic OD/OS PNG"] --> E["Eye-bound SHA-256 registry"]
+    E --> F["Engineering quality gate"]
+    F --> G["32×32 deterministic pooling"]
+    G --> H["Five-statistic reference encoder"]
+    C --> I["Bounded logit residual fusion"]
+    H --> I
+    F -->|"missing or quality reject"| J["Exact per-eye structured fallback"]
+    I --> K["Offline synthetic result"]
+    J --> K
+```
+
+The image path is deliberately separate from `app/main.py` and `RiskPredictionService`. The core decoder receives bounded bytes, not a path, URL or HTTP body. It accepts only the repository's small canonical PNG subset and rejects metadata, additional chunks, nonzero filters, invalid CRCs, decompression overrun and OD/OS digest mismatches. Public artifact policy denies other common raster and medical-image extensions.
+
+`DeterministicFundusEncoder` is an inspectable statistics adapter, not a trained CNN. `StructuredAnchoredFusionAdapter` keeps the existing nine-feature synthetic score as the anchor and applies at most `0.35` logit adjustment. A missing or quality-rejected eye returns the original value exactly. Provenance, eye mapping or preprocessing substitution fails closed. Encoder contract failure is isolated for the current eye and then makes the image component not-ready for later requests.
+
+The tracked pictures are generated from fixed integer drawing instructions and show a visible `SYNTHETIC OD/OS` label. Their purpose is to exercise engineering contracts and fallback behavior. The [multimodal demo card](MULTIMODAL_DEMO_CARD.md) records hashes, limitations and reproducible commands.
+
 ## Error paths and readiness
 
 - Schema violations return a structured `request_validation_error` with no submitted value.
@@ -68,6 +91,6 @@ The service has no authentication, rate limiting, persistent audit store, revers
 ## Next architecture milestones
 
 - Export a locked research model through a documented adapter after authorization.
-- Add an image-quality gate and bilateral image encoder interface.
+- Design a separately authorized real-image contract only if governance and evaluation evidence become available.
 - Extend the existing structured logs with aggregated latency histograms and drift summaries.
 - Add calibration and subgroup evaluation reports before any real-world pilot.

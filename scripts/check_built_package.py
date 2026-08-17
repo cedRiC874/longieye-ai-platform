@@ -17,6 +17,8 @@ FORBIDDEN_SUFFIXES = {
     ".csv",
     ".db",
     ".joblib",
+    ".jpeg",
+    ".jpg",
     ".key",
     ".npy",
     ".npz",
@@ -27,6 +29,8 @@ FORBIDDEN_SUFFIXES = {
     ".pfx",
     ".pickle",
     ".pkl",
+    ".png",
+    ".ppm",
     ".pt",
     ".pt2",
     ".pth",
@@ -81,8 +85,8 @@ def verify_wheel(wheel_path: Path) -> dict[str, object]:
                 raise BuiltPackageError("wheel metadata inventory is invalid")
             metadata_bytes = archive.read(metadata_names[0])
             metadata = BytesParser().parsebytes(metadata_bytes)
-            if metadata.get("Version") != "0.3.0":
-                raise BuiltPackageError("wheel version does not match Sprint 2")
+            if metadata.get("Version") != "0.4.0":
+                raise BuiltPackageError("wheel version does not match Sprint 3")
             normalized_metadata = metadata_bytes.replace(b"\r\n", b"\n")
             _, separator, description = normalized_metadata.partition(b"\n\n")
             expected_description = (PROJECT_ROOT / "README.md").read_bytes().replace(

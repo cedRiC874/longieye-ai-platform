@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 import httpx
+import pytest
 
 from app.main import app
 
@@ -33,7 +34,7 @@ def test_health_exposes_demo_safety_state():
         "status": "ok",
         "model_stage": "demo_synthetic",
         "model_id": "longieye-synthetic-static-sex-delta8-v0",
-        "api_version": "0.3.0",
+        "api_version": "0.4.0",
         "clinical_use": False,
     }
     assert response.headers["X-Request-ID"]
@@ -104,6 +105,29 @@ def test_extra_identity_fields_are_rejected_instead_of_ignored():
     assert body["error"]["code"] == "request_validation_error"
     assert body["error"]["details"][0]["type"] == "extra_forbidden"
     assert "private-identifier" not in response.text
+
+
+@pytest.mark.parametrize(
+    ("field_name", "submitted_value"),
+    [
+        ("images", {"od": "not-accepted"}),
+        ("image_path", "C:/private/person.png"),
+        ("image_url", "https://example.invalid/private.png"),
+        ("image_base64", "do-not-echo-image-payload"),
+    ],
+)
+def test_public_predict_rejects_every_image_transport_field(
+    field_name, submitted_value
+):
+    payload = request_payload()
+    payload[field_name] = submitted_value
+
+    response = api_request("POST", "/predict", json=payload)
+
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "request_validation_error"
+    assert response.json()["error"]["details"][0]["type"] == "extra_forbidden"
+    assert str(submitted_value) not in response.text
 
 
 def test_case_alias_and_followup_contract_are_strict():

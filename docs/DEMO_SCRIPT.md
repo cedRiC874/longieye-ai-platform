@@ -43,3 +43,30 @@ Sprint 2 的演示重点是“受控接入边界”，不是声称已经转换�
 > Sprint 2 将模型加载改造成可审计的 adapter 边界。公开 CI 只在临时目录生成合成 state dict，用它验证外部审批绑定、文件清单、特征顺序、shape、dtype、checksum 和黄金向量一致性；真实研究 checkpoint 默认未授权，也没有接入公开 API。这里的 SHA-256 只证明字节一致，包外 JSON 回执也不等于机构数字签名、公开发布授权或临床有效性。
 
 只有 Phase B 获得明确演示许可后，才能在批准范围内展示真实研究模型的聚合证据；本地使用批准不等于录屏或公开发布批准。
+
+## Sprint 3 全合成多模态演示补充
+
+录制前先验证固定图像并准备两个终端：
+
+```powershell
+.\.venv\Scripts\python.exe scripts\generate_synthetic_fundus.py --check
+.\.venv\Scripts\python.exe scripts\run_multimodal_demo.py --scenario both --human
+```
+
+推荐 45 秒补充解说：
+
+**0–10秒：** 展示两张带水印的图片。“这两张 OD/OS 图不是患者影像，也不是下载的数据集，而是固定整数代码生成的 fundus-like fixture。仓库只允许这两个路径和摘要。”
+
+**10–22秒：** 展示 `both` 输出。“严格解码器会检查 PNG chunk、CRC、尺寸、解压上限、眼别像素摘要和工程质控；参考 encoder 只计算五个可审阅统计量，没有训练 CNN。”
+
+**22–34秒：** 运行单眼回退：
+
+```powershell
+.\.venv\Scripts\python.exe scripts\run_multimodal_demo.py --scenario missing-os --human
+```
+
+“OS 图像缺失后，只回退 OS，并且分数与原结构化模型逐值相同；OD 仍使用有界合成图像修正。回退原因是显式字段，不会静默退化。”
+
+**34–45秒：** 返回 Swagger `/docs`。“多模态路径故意不进入 HTTP。公开请求仍只接收 Y1/Y2 JSON，图像、路径、URL 和 Base64 都被拒绝。这个 Sprint 展示的是多模态合同、质量门和优雅降级，不是医疗效果。”
+
+不要把参考 encoder 称为“图像 AI 模型”，不要声称融合提升准确率，也不要把合成图像分数与论文指标放在一起。录屏只显示固定 fixture、聚合基准和安全标签。

@@ -41,9 +41,9 @@ Validate the public, non-loadable manifest template and tracked-file policy:
 .\.venv\Scripts\python.exe scripts\check_public_artifacts.py
 ```
 
-The tracked-file policy is a path/extension/size guardrail, not content-aware DLP or proof that all Git history is safe. Release review must still inspect history, secrets and the final build context separately.
+The tracked-file policy is a path, extension, size, common magic-byte and exact-asset-hash guardrail. It is not comprehensive content-aware DLP or proof that all Git history is safe. Release review must still inspect history, secrets and the final build context separately.
 
-The separate CI adapter job installs the pinned CPU-only PyTorch 2.13.0 test runtime from `requirements.research.lock`. It generates its synthetic state dict under pytest's temporary directory; no `.pt` file is committed. The default local environment reports `74 passed, 5 skipped`; the CI job sets `LONGIEYE_REQUIRE_TORCH=1`, so a missing import fails instead of skipping.
+The separate CI adapter job installs the pinned CPU-only PyTorch 2.13.0 test runtime from `requirements.research.lock`. It generates its synthetic state dict under pytest's temporary directory; no `.pt` file is committed. The v0.4 default environment reports `140 passed, 5 skipped`; the complete environment reports `145 passed`. The CI job sets `LONGIEYE_REQUIRE_TORCH=1`, so a missing import fails instead of skipping.
 
 After a real package receives explicit local-use authorization, an engineering-only report can be created in the Git-ignored `artifacts/private/comparison` directory. The receipt must be stored in a separately controlled location, not inside the three-file research package:
 
@@ -57,6 +57,40 @@ After a real package receives explicit local-use authorization, an engineering-o
 The package must contain exactly `manifest.json`, its named model card and one checkpoint; symlinks, extra files and oversized files are rejected. The standard comparison CLI invokes the generic builder only after this package gate succeeds. The builder itself accepts protocol backends and therefore records, but does not independently authenticate, authorization metadata; the generated report states that limitation. The command measures only already-loaded sequential P50/P95/P99 and excludes both synthetic sanity metrics and research quality metrics. It does not yet measure cold load, RSS or artifact size. A local report must not be committed or shown publicly unless its exact contents receive separate release approval.
 
 `torch.load(..., weights_only=True)` narrows the accepted object surface but is not a sandbox and does not eliminate denial-of-service or memory-exhaustion risk. Load only a trusted, explicitly approved checkpoint in an isolated environment; the one-megabyte package limit is an additional bound, not a trust substitute.
+
+## Sprint 3 synthetic multimodal operations
+
+Sprint 3A is an offline, synthetic-only path. It does not add an HTTP upload endpoint and it does not change `LONGIEYE_MODEL_PATH`. The public service continues to reject every image transport field and every model stage other than `demo_synthetic`.
+
+Verify that the two tracked OD/OS images still match their integer generator, canonical PNG contract and pixel registry:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\generate_synthetic_fundus.py --check
+```
+
+Running the generator without `--check` rewrites only `examples/synthetic_fundus/od.png` and `os.png`. Review any resulting hash change before commit; a changed fixture also requires explicit updates to the immutable pixel registry, public artifact allowlist and multimodal demo card. Never use this command to convert or overwrite a real image.
+
+Run the three supported offline scenarios:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\run_multimodal_demo.py --scenario both --human
+.\.venv\Scripts\python.exe scripts\run_multimodal_demo.py --scenario missing-os --human
+.\.venv\Scripts\python.exe scripts\run_multimodal_demo.py --scenario missing-both --human
+```
+
+The runner has no arbitrary image-path argument. It reads only the two fixed repository fixtures with bounded regular-file checks, then passes in-memory bytes to the strict decoder. It never logs or returns paths, hashes, pixels or embeddings.
+
+Quality rejection and missing images are explicit per-eye fallbacks. The fallback score must equal the existing structured result exactly. Laterality, digest, duplicate-image or preprocessed-provenance conflict is not a fallback condition; it fails closed. An encoder contract failure affects only that eye in the current call, then locks the image component not-ready for subsequent calls.
+
+The public artifact scanner denies common raster, medical-image and container extensions and magic bytes by default. Only the two exact synthetic PNG paths/file hashes and the existing architecture SVG/hash are allowlisted. `.dockerignore` excludes those unapproved formats from the build context, and the wheel policy rejects raster payloads.
+
+Generate the aggregate local benchmark:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\benchmark_multimodal.py
+```
+
+Outputs are `benchmarks/multimodal_latest.json` and `.md`. They contain environment data, aggregate P50/P95/P99, sequential throughput and branch counts only. They must not contain images, paths, hashes, embeddings, case aliases, per-case scores or AUC.
 
 ## Request tracing
 

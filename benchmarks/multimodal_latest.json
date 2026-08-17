@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "package_version": "0.4.0",
+  "fusion_contract_version": "structured-anchor-logit-residual-v1",
+  "image_embedding_contract_version": "synthetic-fundus-statistics-v1",
+  "generated_at_utc": "2026-08-17T01:21:13.838854+00:00",
+  "model_stage": "demo_multimodal_synthetic",
+  "image_source": "procedurally_generated_synthetic_only",
+  "clinical_use": false,
+  "environment": {
+    "python": "3.12.13",
+    "implementation": "CPython",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "measurement": {
+    "sequential": true,
+    "includes_file_io": false,
+    "warmup_iterations": 20,
+    "iterations_per_scenario": 300,
+    "persists_case_outputs": false
+  },
+  "results": [
+    {
+      "iterations": 300,
+      "p50_ms": 52.9944,
+      "p95_ms": 55.290905,
+      "p99_ms": 56.534926,
+      "mean_ms": 53.180913,
+      "throughput_requests_per_second": 18.803,
+      "scenario": "both_images",
+      "expected_result_mode": "multimodal",
+      "synthetic_image_branches": 2,
+      "structured_fallback_branches": 0,
+      "warmup_iterations": 20,
+      "errors": 0
+    },
+    {
+      "iterations": 300,
+      "p50_ms": 27.31895,
+      "p95_ms": 30.21488,
+      "p99_ms": 35.581863,
+      "mean_ms": 27.655913,
+      "throughput_requests_per_second": 36.157,
+      "scenario": "missing_os",
+      "expected_result_mode": "partial_fallback",
+      "synthetic_image_branches": 1,
+      "structured_fallback_branches": 1,
+      "warmup_iterations": 20,
+      "errors": 0
+    },
+    {
+      "iterations": 300,
+      "p50_ms": 0.0135,
+      "p95_ms": 0.014605,
+      "p99_ms": 0.017815,
+      "mean_ms": 0.013658,
+      "throughput_requests_per_second": 72558.409,
+      "scenario": "missing_both",
+      "expected_result_mode": "structured_fallback",
+      "synthetic_image_branches": 0,
+      "structured_fallback_branches": 2,
+      "warmup_iterations": 20,
+      "errors": 0
+    }
+  ]
+}

@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "longieye-ai-platform"
 dynamic = ["version"]
-description = "A privacy-first engineering demo for longitudinal myopia risk modeling."
+description = "A privacy-first longitudinal and synthetic multimodal myopia engineering demo."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
