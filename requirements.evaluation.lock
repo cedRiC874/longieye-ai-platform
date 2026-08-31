@@ -1,0 +1,2 @@
+# Public-cohort validation remains optional and outside the API/Docker runtime.
+numpy==2.2.6

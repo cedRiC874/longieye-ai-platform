@@ -1,29 +1,76 @@
 # LongiEye AI Platform
 
-LongiEye 是一个面向作品集的、隐私优先的纵向近视风险建模工程示例。它把硕士论文中的纵向临床建模思路整理成清晰的领域模型、特征管道、可替换推理后端和 FastAPI 服务。
+> **公开队列上可复现的纵向结局验证管线**
 
-> 当前 `v0.4.0` 的公开 API 仍仅使用确定性生成的合成数据训练演示模型。输出不是医疗结论，不能用于诊断、筛查或治疗决策。
+LongiEye `v0.5.0` 将公开真实队列的数据追溯、参与者级交叉验证、校准、决策曲线、多重性校正和安全工件边界整合为一条可重复运行的 AI 验证流程。
 
-![LongiEye 系统架构图](docs/assets/architecture.svg)
+[完整验证报告](docs/PUBLIC_COHORT_VALIDATION.md) · [聚合结果 JSON](benchmarks/public_cohort_validation.json) · [运行手册](docs/OPERATIONS.md)
+
+## 核心结果
+
+数据来自 Orinda Longitudinal Study of Myopia（OLSM）公开子集：618 名基线非近视儿童，使用初始检查的右眼眼部、行为和家族史变量，预测五年内新发近视；共 81 例发生结局。
+
+| 模型 | AUC（95% CI） | Brier（95% CI） | 校准截距 | 校准斜率 |
+| --- | ---: | ---: | ---: | ---: |
+| 仅基线球镜等效值 | 0.859（0.820-0.900） | 0.083（0.069-0.099） | -0.004 | 1.002 |
+| 眼部基线模型 | 0.864（0.825-0.902） | 0.083（0.068-0.099） | -0.009 | 0.992 |
+| **完整 ridge 模型** | **0.872（0.830-0.911）** | **0.080（0.066-0.096）** | **-0.009** | **0.934** |
+
+> **结论：**完整模型取得最高点估计，但三项配对 AUC 比较经 Holm 校正后均不显著，调整后 `p=1.0000`。项目保留这个阴性结果，而不是只展示最好看的 AUC。
+
+| 校准曲线 | 探索性决策曲线（DCA） |
+| --- | --- |
+| ![公开队列校准曲线](docs/assets/public_cohort_calibration.svg) | ![公开队列探索性 DCA](docs/assets/public_cohort_dca.svg) |
+
+### 验证设计
+
+- 5 次重复嵌套 5×5 participant-level cross-fitting；预处理和 ridge 选择只在训练折完成。
+- 每名参与者的 5 份 OOF 概率取平均，再计算 AUC、Brier、校准和 DCA。
+- 2,000 次参与者 bootstrap 给出条件区间；不把它包装成整条训练流水线的重拟合区间。
+- 10,000 次配对随机化检验产生原始 p 值，三项模型比较统一使用 Holm FWER 校正。
+- 原始 TSV、参与者 ID、折分、逐人 OOF 和冻结参数均留在 Git 忽略的本地 `build/`；仓库只保存聚合结果和曲线。
+
+### 一键复现
+
+```powershell
+python -m pip install -r requirements.lock
+python -m pip install -r requirements.evaluation.lock
+python -m pip install --no-deps -e .
+python scripts/run_public_cohort_validation.py --bootstrap 2000
+```
+
+### 解释边界
+
+- 这是只有 81 个事件的 pilot 内部验证，不是外部验证，也不是临床部署证据。
+- 公开子集只有基线预测变量和五年纵向结局，不包含重复 Y1/Y2 预测变量，因此不是私有论文九维变化量模型的复现。
+- DCA 对应假设性的“加强随访”动作，没有独立临床效用研究，只能视为探索性分析。
+- `aplore3` 分发包的 GPL-3 已确认，但底层 OLSM 队列数据的再利用权未由本项目独立核验；商业使用或公开冻结参数前仍需人工权利审查。
 
 ## 为什么值得放进作品集
 
-- 研究来源边界已记录：公开特征合同与私有证据登记分离；完整追溯信息须在获批的 Phase B 受控登记中建立。
-- 工程边界清楚：领域校验、特征提取、模型推理和 API 分层实现。
-- 结果不夸大：公开 HTTP 返回值都标记为 `demo_synthetic`，离线多模态结果另标 `demo_multimodal_synthetic`；真实研究指标与演示模型指标分开陈述。
-- 可持续演进：后续可以替换为真实交叉验证模型、图像分支和监控组件。
+- **结果可复现：**数据 URL、commit、SHA-256、随机种子、验证配置和聚合产物均被固定。
+- **统计流程完整：**不仅报告 AUC，还包含 Brier、校准截距/斜率、带区间的校准曲线、DCA 和多重性校正。
+- **防止数据泄漏：**参与者级分折、折内预处理、唯一 OOF 预测和严格原始数据门禁都有自动化测试。
+- **不夸大结果：**明确区分内部验证、外部验证、临床效用和软件工程正确性，并公开阴性模型比较。
+- **工程可交付：**155 项测试、Python 3.10/3.12 评估 CI、锁定依赖、隔离 wheel 验证和公开工件扫描均已配置。
+
+## 工程系统与安全边界
+
+![LongiEye 系统架构图](docs/assets/architecture.svg)
+
+公开 `/predict` 仍保留原有的合成 Y1/Y2 九维结构化合同，作为 API、错误边界、日志、Docker 和模型门禁的工程演示；真实 OLSM 验证不会静默替换不兼容的 HTTP 合同。所有输出均为非临床结果，不能用于诊断、筛查或治疗决策。
 
 ## 当前功能
 
-- Y1/Y2 两次随访数据校验。
-- “静态性别编码 + 8项纵向变化量”特征提取。
-- 纯 Python 合成数据和双眼逻辑回归演示模型训练。
-- OD/OS 双目标风险演示接口。
-- FastAPI `/health`、`/ready` 与 `/predict` 端点。
-- 统一错误响应、端到端请求 ID 和隐私安全的 JSON 日志。
+- OLSM 公开真实队列的五年新发近视内部验证。
+- 重复嵌套交叉验证、participant bootstrap、校准、探索性 DCA 与 Holm 多重性校正。
+- 固定下载摘要、原始数据防误提交、聚合报告和确定性 SVG 曲线。
+- Y1/Y2 两次随访领域校验与“静态性别编码 + 8 项纵向变化量”合成服务合同。
+- FastAPI `/health`、`/ready` 与 `/predict`，统一错误响应、请求 ID 和隐私安全 JSON 日志。
+- 研究模型 manifest、包外审批、SHA-256、权重结构和黄金向量 fail-closed 门禁。
+- 严格 canonical PNG、合成眼底图质控、确定性图像编码与逐眼精确回退。
 - P50/P95/P99、顺序吞吐量、进程 RSS 与 Python 峰值内存基准。
-- 严格 canonical PNG 解码、合成眼底图质控、确定性图像编码与逐眼安全回退。
-- 145 项测试（含可选 PyTorch 适配测试）、锁定依赖，以及已配置的 Dockerfile 和 GitHub Actions CI。
+- 155 项测试、锁定依赖、Dockerfile 和 GitHub Actions CI。
 
 ## Sprint 3：全合成多模态扩展
 
@@ -77,7 +124,7 @@ python -m pytest -q
 uvicorn app.main:app --reload
 ```
 
-默认轻量环境预期会跳过需要 PyTorch 的5项专项测试；当前基线为 `140 passed, 5 skipped`。安装研究适配依赖后的完整基线为 `145 passed`。GitHub 的独立 research-adapter job 会要求这些测试真实运行，无法导入 Torch 时直接失败。
+默认轻量环境不安装 PyTorch 或 NumPy；当前基线为 `141 passed, 6 skipped`。安装研究适配和公开队列依赖后的完整基线为 `155 passed`。GitHub 的独立 research-adapter 与 public-cohort-validation jobs 会要求对应测试真实运行，依赖缺失时不能假绿。
 
 访问 `http://127.0.0.1:8000/docs` 查看中文接口说明，或发送示例请求。HTTP 路径和 JSON 字段名保留英文，以维持稳定的机器合同：
 
@@ -178,6 +225,7 @@ tests/               核心单元测试
 ## 隐私与用途边界
 
 - 不提交真实临床表格、受试者标识、图像路径、模型权重或逐人预测。
+- 公开队列原始行、participant ID、折分、OOF 预测与冻结模型参数仅保存在忽略的本地 `build/`；Git 只保存聚合指标和曲线。
 - 不提交真实眼底图、任意栅格图像或医学影像；固定 fixture 必须与生成器和摘要 registry 一致。
 - 演示模型只证明软件工程流程，不复现论文中的研究性能。
 - 离线 Phase B parity 前必须完成所有权、隐私与工件使用授权。
@@ -202,12 +250,19 @@ tests/               核心单元测试
 
 完整结果见[全合成多模态基准](benchmarks/multimodal_latest.md)。这些数字只表示本机工程开销，不是多模态模型效果或临床性能。
 
+## 许可证与第三方数据
+
+除另有说明外，本仓库源代码和项目文档按 [GNU General Public License v3.0 only](LICENSE)（`GPL-3.0-only`）发布。分发修改版本时，需要遵守 GPLv3 对源代码提供、许可证保留和修改声明等要求。
+
+本许可证只覆盖本仓库有权许可的内容，不会改变第三方依赖或数据集的原始条款。OLSM 原始参与者数据不进入 Git；`aplore3` 分发包的 GPL-3 已确认，但底层队列数据的独立再利用授权仍需在商业使用、冻结参数公开或临床扩展前另行核验。
+
 ## 进一步阅读
 
 - [模型卡](docs/MODEL_CARD.md)
 - [研究工件授权清单](docs/RESEARCH_ARTIFACT_AUTHORIZATION.md)
 - [研究模型卡模板](docs/RESEARCH_MODEL_CARD_TEMPLATE.md)
 - [全合成多模态 Demo Card](docs/MULTIMODAL_DEMO_CARD.md)
+- [公开纵向队列验证报告](docs/PUBLIC_COHORT_VALIDATION.md)
 - [运行手册](docs/OPERATIONS.md)
 - [一分钟演示脚本](docs/DEMO_SCRIPT.md)
 - [作品集路线](docs/ROADMAP.md)

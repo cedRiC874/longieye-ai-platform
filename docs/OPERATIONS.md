@@ -43,7 +43,7 @@ Validate the public, non-loadable manifest template and tracked-file policy:
 
 The tracked-file policy is a path, extension, size, common magic-byte and exact-asset-hash guardrail. It is not comprehensive content-aware DLP or proof that all Git history is safe. Release review must still inspect history, secrets and the final build context separately.
 
-The separate CI adapter job installs the pinned CPU-only PyTorch 2.13.0 test runtime from `requirements.research.lock`. It generates its synthetic state dict under pytest's temporary directory; no `.pt` file is committed. The v0.4 default environment reports `140 passed, 5 skipped`; the complete environment reports `145 passed`. The CI job sets `LONGIEYE_REQUIRE_TORCH=1`, so a missing import fails instead of skipping.
+The separate CI adapter job installs the pinned CPU-only PyTorch 2.13.0 test runtime from `requirements.research.lock`. It generates its synthetic state dict under pytest's temporary directory; no `.pt` file is committed. The v0.5 default environment reports `141 passed, 6 skipped`; the complete environment with both optional suites reports `155 passed`. The CI job sets `LONGIEYE_REQUIRE_TORCH=1`, so a missing import fails instead of skipping.
 
 After a real package receives explicit local-use authorization, an engineering-only report can be created in the Git-ignored `artifacts/private/comparison` directory. The receipt must be stored in a separately controlled location, not inside the three-file research package:
 
@@ -82,7 +82,7 @@ The runner has no arbitrary image-path argument. It reads only the two fixed rep
 
 Quality rejection and missing images are explicit per-eye fallbacks. The fallback score must equal the existing structured result exactly. Laterality, digest, duplicate-image or preprocessed-provenance conflict is not a fallback condition; it fails closed. An encoder contract failure affects only that eye in the current call, then locks the image component not-ready for subsequent calls.
 
-The public artifact scanner denies common raster, medical-image and container extensions and magic bytes by default. Only the two exact synthetic PNG paths/file hashes and the existing architecture SVG/hash are allowlisted. `.dockerignore` excludes those unapproved formats from the build context, and the wheel policy rejects raster payloads.
+The public artifact scanner denies common raster, medical-image and container extensions and magic bytes by default. Only the two exact synthetic PNGs, the architecture SVG and the two aggregate public-cohort curve SVGs are hash-allowlisted. `.dockerignore` excludes unapproved formats from the build context, and the wheel policy rejects raster payloads.
 
 Generate the aggregate local benchmark:
 
@@ -91,6 +91,27 @@ Generate the aggregate local benchmark:
 ```
 
 Outputs are `benchmarks/multimodal_latest.json` and `.md`. They contain environment data, aggregate P50/P95/P99, sequential throughput and branch counts only. They must not contain images, paths, hashes, embeddings, case aliases, per-case scores or AUC.
+
+## Sprint 4 public-cohort validation
+
+The OLSM validation track is offline and does not alter the FastAPI schema or `LONGIEYE_MODEL_PATH`. Install the optional numerical dependency and run:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements.evaluation.lock
+.\.venv\Scripts\python.exe scripts\run_public_cohort_validation.py --bootstrap 2000
+```
+
+The script downloads a commit-pinned public TSV to `build/public_cohort/`, enforces its SHA-256, exact header, 618 unique participant IDs and 81-event contract, then performs five repeated nested 5×5 participant-level cross-fitting runs. Preprocessing and ridge selection are fitted only inside training folds; primary metrics use the participant-level average of the five OOF probabilities.
+
+Tracked outputs are limited to:
+
+- `benchmarks/public_cohort_validation.json`: aggregate metrics, curve points and confidence intervals;
+- `docs/PUBLIC_COHORT_VALIDATION.md`: source-linked report and limitations;
+- two deterministic, hash-allowlisted SVG curves under `docs/assets/`.
+
+The raw TSV, fold assignments, participant-level OOF predictions and full-data frozen parameters remain under ignored local storage and must not be copied into Git, releases, screenshots or Docker. The default API runtime does not install NumPy and does not import this evaluation module.
+
+The result is pilot internal validation of a baseline risk model against a five-year longitudinal outcome. It is not external validation, does not reproduce the private thesis/Y1-Y2 feature contract and does not establish clinical utility. DCA is explicitly hypothetical because no clinician-derived utility study defines the action or cost ratio.
 
 ## Request tracing
 
