@@ -372,6 +372,7 @@
   },
   "limitations": [
     "Only 81 events; results are pilot internal validation, not confirmation.",
+    "The full model has 81 events across 14 candidate features (nominal EPV 5.8), below the conventional 10-EPV heuristic; ridge regularization mitigates but does not remove overfitting uncertainty.",
     "The public subset contains baseline predictors and a longitudinal outcome, not repeated Y1/Y2 predictors.",
     "No external cohort was available; cross-validation is not external validation.",
     "DCA uses a hypothetical enhanced-monitoring action and does not establish clinical utility.",
@@ -430,6 +431,11 @@
       "brier_ci_95": [
         0.06572441382,
         0.09644422249
+      ],
+      "brier_skill_score": 0.2953380444,
+      "brier_skill_score_ci_95": [
+        0.1940438221,
+        0.3884467967
       ],
       "calibration_intercept": -0.009396875002,
       "calibration_slope": 0.9343053899,
@@ -498,6 +504,11 @@
         0.06828395317,
         0.09909293829
       ],
+      "brier_skill_score": 0.2717061263,
+      "brier_skill_score_ci_95": [
+        0.1762718679,
+        0.3603644764
+      ],
       "calibration_intercept": -0.008728310094,
       "calibration_slope": 0.9924234106,
       "features": [
@@ -558,6 +569,11 @@
         0.06854729266,
         0.09892004002
       ],
+      "brier_skill_score": 0.2714712998,
+      "brier_skill_score_ci_95": [
+        0.176668289,
+        0.3593904455
+      ],
       "calibration_intercept": -0.003719006265,
       "calibration_slope": 1.001766517,
       "features": [
@@ -607,6 +623,10 @@
     "family": "three analysis-version-defined paired AUC comparisons",
     "method": "Holm family-wise error control",
     "raw_p_value_method": "paired participant-level randomization test"
+  },
+  "null_model": {
+    "constant_probability_brier": 0.1138891507,
+    "event_rate": 0.1310679612
   },
   "primary_calibration_ci_95": {
     "intercept": [

@@ -1,6 +1,7 @@
 # Public longitudinal cohort validation
 
 > Status: real public measurements and a five-year longitudinal outcome; pilot internal validation only.
+> Scope first: this experiment validates the evaluation pipeline, not LongiEye's Y1-to-Y2 delta-feature model. OLSM contains baseline right-eye predictors and a future outcome, so the task is baseline prognosis rather than longitudinal trajectory modeling.
 
 ## Cohort and provenance
 
@@ -28,13 +29,19 @@ The OLSM subset contains baseline right-eye measurements and whether myopia deve
 
 ## Internal-validation results
 
-| Model | Features | AUC (95% CI) | Brier (95% CI) | Calibration intercept | Calibration slope |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| `refraction_only` | 1 | 0.859 (0.820-0.900) | 0.083 (0.069-0.099) | -0.004 | 1.002 |
-| `ocular` | 7 | 0.864 (0.825-0.902) | 0.083 (0.068-0.099) | -0.009 | 0.992 |
-| `full` | 14 | 0.872 (0.830-0.911) | 0.080 (0.066-0.096) | -0.009 | 0.934 |
+The event rate is 0.131; a constant prevalence prediction has Brier 0.114 and defines BSS = 0.
+
+| Model | Features | AUC (95% CI) | Brier (95% CI) | BSS (95% CI) | Calibration intercept | Calibration slope |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `refraction_only` | 1 | 0.859 (0.820-0.900) | 0.083 (0.069-0.099) | 0.271 (0.177-0.359) | -0.004 | 1.002 |
+| `ocular` | 7 | 0.864 (0.825-0.902) | 0.083 (0.068-0.099) | 0.272 (0.176-0.360) | -0.009 | 0.992 |
+| `full` | 14 | 0.872 (0.830-0.911) | 0.080 (0.066-0.096) | 0.295 (0.194-0.388) | -0.009 | 0.934 |
 
 Primary calibration-intercept bootstrap CI: -0.306 to 0.273. Primary calibration-slope bootstrap CI: 0.764 to 1.170.
+
+## Main substantive finding
+
+The honest result is that baseline spherical-equivalent refraction alone carries almost all detectable predictive signal. The 14-feature full model improves pooled AUC by only 0.013 over the one-feature model, its confidence interval crosses zero, and the Holm-adjusted comparison is not significant. In a screening context this suggests that a cheap single measurement may allocate follow-up resources nearly as well as a more complex examination bundle; it is a resource-allocation hypothesis, not a clinical recommendation.
 
 ![Calibration curve](assets/public_cohort_calibration.svg)
 
@@ -60,7 +67,7 @@ The curve is exploratory because no clinician-derived utility study defines the 
 
 ## Interpretation boundary
 
-This is a real public longitudinal-outcome experiment, but it remains pilot internal validation. There are only 81 events, no external cohort, and no repeated Y1/Y2 predictor measurements in the public subset. Bootstrap intervals are conditional on the repeated cross-fitted predictions and do not include full pipeline-refit uncertainty. The results do not validate the synthetic API, do not reproduce the private thesis model, and do not establish clinical utility or deployment readiness.
+This is a real public longitudinal-outcome experiment, but it remains pilot internal validation. There are only 81 events for 14 full-model features, a nominal EPV of about 5.8 versus the conventional 10-EPV heuristic. Ridge regularization and nested validation mitigate, but do not eliminate, overfitting uncertainty. There is no external cohort and no repeated Y1/Y2 predictor measurement in the public subset. Bootstrap intervals are conditional on the repeated cross-fitted predictions and do not include full pipeline-refit uncertainty. The results validate the evaluation pipeline, not the LongiEye delta-feature model, synthetic API, private thesis model, clinical utility, or deployment readiness.
 
 The safe portfolio claim is:
 

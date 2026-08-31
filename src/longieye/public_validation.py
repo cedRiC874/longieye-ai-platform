@@ -277,6 +277,19 @@ def brier_score(outcomes: np.ndarray, probabilities: np.ndarray) -> float:
     return float(np.mean((np.asarray(probabilities) - np.asarray(outcomes)) ** 2))
 
 
+def brier_skill_score(outcomes: np.ndarray, probabilities: np.ndarray) -> float:
+    """Return Brier skill relative to the cohort-prevalence constant model."""
+
+    y = np.asarray(outcomes, dtype=float)
+    prevalence = float(np.mean(y))
+    reference = brier_score(y, np.full(y.size, prevalence, dtype=float))
+    if reference <= 0.0:
+        raise PublicValidationError(
+            "metric_undefined", "Brier skill requires a non-degenerate outcome."
+        )
+    return float(1.0 - brier_score(y, probabilities) / reference)
+
+
 def log_loss(outcomes: np.ndarray, probabilities: np.ndarray) -> float:
     p = np.clip(np.asarray(probabilities, dtype=float), 1e-12, 1.0 - 1e-12)
     y = np.asarray(outcomes, dtype=float)
@@ -652,6 +665,7 @@ def run_internal_validation(
     bootstrap_brier = {
         name: np.empty(bootstrap_repetitions, dtype=float) for name in FEATURE_SETS
     }
+    bootstrap_reference_brier = np.empty(bootstrap_repetitions, dtype=float)
     primary_calibration_intercept = np.empty(bootstrap_repetitions, dtype=float)
     primary_calibration_slope = np.empty(bootstrap_repetitions, dtype=float)
     calibration_bin_count = 8
@@ -677,6 +691,7 @@ def run_internal_validation(
                 values[repetition] = math.nan
             for values in bootstrap_brier.values():
                 values[repetition] = math.nan
+            bootstrap_reference_brier[repetition] = math.nan
             primary_calibration_intercept[repetition] = math.nan
             primary_calibration_slope[repetition] = math.nan
             bootstrap_calibration_rate[repetition, :] = math.nan
@@ -690,6 +705,11 @@ def run_internal_validation(
             bootstrap_brier[model_name][repetition] = brier_score(
                 sampled_outcome, sampled_prediction
             )
+        sampled_prevalence = float(np.mean(sampled_outcome))
+        bootstrap_reference_brier[repetition] = brier_score(
+            sampled_outcome,
+            np.full(sampled_outcome.size, sampled_prevalence, dtype=float),
+        )
         calibration_intercept, calibration_slope, _ = calibration_statistics(
             sampled_outcome, predictions[PRIMARY_MODEL][indices]
         )
@@ -711,6 +731,9 @@ def run_internal_validation(
             outcomes, predictions[model_name]
         )
         auc = auc_score(outcomes, predictions[model_name])
+        bootstrap_bss = 1.0 - (
+            bootstrap_brier[model_name] / bootstrap_reference_brier
+        )
         model_results[model_name] = {
             "features": list(features),
             "selected_ridge_lambdas_by_crossfit_repeat": selected_lambdas[
@@ -720,6 +743,10 @@ def run_internal_validation(
             "auc_ci_95": list(percentile_interval(bootstrap_auc[model_name])),
             "brier": brier,
             "brier_ci_95": list(percentile_interval(bootstrap_brier[model_name])),
+            "brier_skill_score": brier_skill_score(
+                outcomes, predictions[model_name]
+            ),
+            "brier_skill_score_ci_95": list(percentile_interval(bootstrap_bss)),
             "calibration_intercept": calibration_intercept,
             "calibration_slope": calibration_slope,
         }
@@ -828,6 +855,13 @@ def run_internal_validation(
             "unit": "participant; right-eye baseline ocular measurements",
             "analysis_type": "pilot internal validation",
         },
+        "null_model": {
+            "event_rate": float(np.mean(outcomes)),
+            "constant_probability_brier": brier_score(
+                outcomes,
+                np.full(outcomes.size, float(np.mean(outcomes)), dtype=float),
+            ),
+        },
         "validation": {
             "outer_folds": 5,
             "inner_folds": 5,
@@ -889,6 +923,7 @@ def run_internal_validation(
         },
         "limitations": [
             "Only 81 events; results are pilot internal validation, not confirmation.",
+            "The full model has 81 events across 14 candidate features (nominal EPV 5.8), below the conventional 10-EPV heuristic; ridge regularization mitigates but does not remove overfitting uncertainty.",
             "The public subset contains baseline predictors and a longitudinal outcome, not repeated Y1/Y2 predictors.",
             "No external cohort was available; cross-validation is not external validation.",
             "DCA uses a hypothetical enhanced-monitoring action and does not establish clinical utility.",

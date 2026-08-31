@@ -12,6 +12,7 @@ from longieye.public_validation import (  # noqa: E402
     EXPECTED_HEADERS,
     PublicValidationError,
     auc_score,
+    brier_skill_score,
     calibration_statistics,
     decision_curve_net_benefit,
     holm_adjust,
@@ -167,3 +168,6 @@ def test_calibration_statistics_are_finite() -> None:
 
     assert np.isfinite([intercept, slope, brier]).all()
     assert 0.0 <= brier <= 1.0
+    prevalence = np.full(outcomes.size, outcomes.mean(), dtype=float)
+    assert brier_skill_score(outcomes, prevalence) == pytest.approx(0.0)
+    assert brier_skill_score(outcomes, outcomes) == pytest.approx(1.0)

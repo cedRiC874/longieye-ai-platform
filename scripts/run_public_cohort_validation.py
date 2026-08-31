@@ -318,6 +318,7 @@ def format_ci(value: float, interval: list[float]) -> str:
 
 def write_markdown(report: dict[str, object], path: Path) -> None:
     dataset = report["dataset"]
+    null_model = report["null_model"]
     validation = report["validation"]
     models = report["models"]
     comparisons = report["model_comparisons"]
@@ -325,6 +326,7 @@ def write_markdown(report: dict[str, object], path: Path) -> None:
     sensitivity = report["split_sensitivity"]
     primary_ci = report["primary_calibration_ci_95"]
     assert isinstance(dataset, dict)
+    assert isinstance(null_model, dict)
     assert isinstance(validation, dict)
     assert isinstance(models, dict)
     assert isinstance(comparisons, list)
@@ -336,6 +338,7 @@ def write_markdown(report: dict[str, object], path: Path) -> None:
         "# Public longitudinal cohort validation",
         "",
         "> Status: real public measurements and a five-year longitudinal outcome; pilot internal validation only.",
+        "> Scope first: this experiment validates the evaluation pipeline, not LongiEye's Y1-to-Y2 delta-feature model. OLSM contains baseline right-eye predictors and a future outcome, so the task is baseline prognosis rather than longitudinal trajectory modeling.",
         "",
         "## Cohort and provenance",
         "",
@@ -363,8 +366,10 @@ def write_markdown(report: dict[str, object], path: Path) -> None:
         "",
         "## Internal-validation results",
         "",
-        "| Model | Features | AUC (95% CI) | Brier (95% CI) | Calibration intercept | Calibration slope |",
-        "| --- | ---: | ---: | ---: | ---: | ---: |",
+        f"The event rate is {float(null_model['event_rate']):.3f}; a constant prevalence prediction has Brier {float(null_model['constant_probability_brier']):.3f} and defines BSS = 0.",
+        "",
+        "| Model | Features | AUC (95% CI) | Brier (95% CI) | BSS (95% CI) | Calibration intercept | Calibration slope |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for name in ("refraction_only", "ocular", "full"):
         row = models[name]
@@ -373,6 +378,7 @@ def write_markdown(report: dict[str, object], path: Path) -> None:
             f"| `{name}` | {len(row['features'])} | "
             f"{format_ci(float(row['auc']), list(row['auc_ci_95']))} | "
             f"{format_ci(float(row['brier']), list(row['brier_ci_95']))} | "
+            f"{format_ci(float(row['brier_skill_score']), list(row['brier_skill_score_ci_95']))} | "
             f"{float(row['calibration_intercept']):.3f} | {float(row['calibration_slope']):.3f} |"
         )
     full = models[PRIMARY_MODEL]
@@ -381,6 +387,10 @@ def write_markdown(report: dict[str, object], path: Path) -> None:
         [
             "",
             f"Primary calibration-intercept bootstrap CI: {primary_ci['intercept'][0]:.3f} to {primary_ci['intercept'][1]:.3f}. Primary calibration-slope bootstrap CI: {primary_ci['slope'][0]:.3f} to {primary_ci['slope'][1]:.3f}.",
+            "",
+            "## Main substantive finding",
+            "",
+            "The honest result is that baseline spherical-equivalent refraction alone carries almost all detectable predictive signal. The 14-feature full model improves pooled AUC by only 0.013 over the one-feature model, its confidence interval crosses zero, and the Holm-adjusted comparison is not significant. In a screening context this suggests that a cheap single measurement may allocate follow-up resources nearly as well as a more complex examination bundle; it is a resource-allocation hypothesis, not a clinical recommendation.",
             "",
             "![Calibration curve](assets/public_cohort_calibration.svg)",
             "",
@@ -414,7 +424,7 @@ def write_markdown(report: dict[str, object], path: Path) -> None:
             "",
             "## Interpretation boundary",
             "",
-            "This is a real public longitudinal-outcome experiment, but it remains pilot internal validation. There are only 81 events, no external cohort, and no repeated Y1/Y2 predictor measurements in the public subset. Bootstrap intervals are conditional on the repeated cross-fitted predictions and do not include full pipeline-refit uncertainty. The results do not validate the synthetic API, do not reproduce the private thesis model, and do not establish clinical utility or deployment readiness.",
+            "This is a real public longitudinal-outcome experiment, but it remains pilot internal validation. There are only 81 events for 14 full-model features, a nominal EPV of about 5.8 versus the conventional 10-EPV heuristic. Ridge regularization and nested validation mitigate, but do not eliminate, overfitting uncertainty. There is no external cohort and no repeated Y1/Y2 predictor measurement in the public subset. Bootstrap intervals are conditional on the repeated cross-fitted predictions and do not include full pipeline-refit uncertainty. The results validate the evaluation pipeline, not the LongiEye delta-feature model, synthetic API, private thesis model, clinical utility, or deployment readiness.",
             "",
             "The safe portfolio claim is:",
             "",

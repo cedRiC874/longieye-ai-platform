@@ -72,15 +72,16 @@ Sprint 3A proves image-contract engineering, graceful degradation and synthetic 
 
 Sprint 4 adds a real public-cohort evaluation track without silently changing the synthetic HTTP contract:
 
+- This track validates the evaluation pipeline, not the LongiEye Y1-to-Y2 delta-feature design. OLSM is a baseline-predictor to five-year-outcome prognosis task, not trajectory modeling.
 - The OLSM public subset is downloaded from a commit-pinned `aplore3 0.9` source and verified against a fixed SHA-256. Raw rows remain under ignored `build/` storage.
 - The cohort contains 618 baseline non-myopic children and a five-year incident-myopia outcome (81 events). The distributed subset has stable participant IDs and no missing cells.
 - Three ridge-logistic models defined in this analysis version use repeated nested 5×5 participant-level cross-fitting. Hyperparameters are selected only inside outer training folds.
 - AUC, Brier, calibration intercept/slope and calibration bins are calculated after participant-level averaging of five repeated OOF predictions. The 2,000 participant bootstrap intervals are conditional on those predictions and do not refit the full pipeline.
 - Exploratory DCA uses a code-fixed 0.03–0.30 threshold range and a hypothetical enhanced-monitoring action. It was not independently preregistered and is not evidence of clinical utility.
 - Three paired AUC comparisons form one family and use Holm FWER control. None is significant after correction.
-- A temporal entry-year split and five additional nested-CV seeds are reported as sensitivity checks.
+- An entry-cohort chronological split and the five nested-CV repeat seeds are reported as sensitivity checks.
 - Git contains only aggregate JSON, deterministic SVG curves and the report. Participant rows, folds, OOF predictions and frozen parameters stay in ignored local storage.
 
-The primary full-model AUC is 0.872 (95% conditional bootstrap CI 0.830–0.911), Brier score 0.080 (0.066–0.096), calibration intercept -0.009 and slope 0.934. With only 81 events and no external cohort, this is explicitly pilot internal validation.
+The prevalence-only Brier score is 0.114. The primary full-model AUC is 0.872 (95% conditional bootstrap CI 0.830–0.911), Brier score 0.080 (0.066–0.096), BSS approximately 0.30, calibration intercept -0.009 and slope 0.934. Refraction alone reaches AUC 0.859, so the other 13 features do not add a statistically detectable increment. With 81 events across 14 features (nominal EPV 5.8) and no external cohort, this is explicitly pilot internal validation.
 
 This track does not reproduce the private thesis model: the public subset has baseline right-eye predictors and a longitudinal outcome, not repeated Y1/Y2 measurements or the nine-feature delta contract. A future service endpoint would require a separately versioned API and intended-use review.
