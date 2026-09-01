@@ -34,7 +34,7 @@ Phase A must remain reproducible without any private research artifact:
 - The generic comparison builder reports only already-loaded contract/runtime evidence, explicitly says that it does not verify authorization itself, and leaves both synthetic sanity and authorized research metric namespaces unavailable. The standard CLI calls it only after the package gate.
 - The public API remains pinned to the synthetic JSON backend; no environment switch can silently enable research mode.
 
-The Sprint 2 baseline reported `79 passed` with the optional PyTorch runtime. The current v0.4 suite reports `145 passed`, including the unchanged research-adapter contract. GitHub Actions verifies the default Python 3.10/3.11/3.12 matrix, deterministic Windows artifacts, wheel isolation and the mandatory PyTorch adapter suite. Phase A remains complete.
+The Sprint 2 baseline reported `79 passed` with the optional PyTorch runtime. The current v0.5 suite reports `155 passed` with both optional PyTorch and public-cohort dependencies, including the unchanged research-adapter contract. GitHub Actions verifies the default Python 3.10/3.11/3.12 matrix, deterministic Windows artifacts, wheel isolation, the mandatory PyTorch adapter suite and the public-cohort validation suite. Phase A remains complete.
 
 Phase A proves adapter engineering. It does not prove that a real checkpoint was exported correctly and does not establish clinical performance.
 
@@ -67,3 +67,21 @@ Sprint 3A adds a fully synthetic, offline-only image branch without changing the
 - Local aggregate benchmarks cover both images, one missing image and both missing images without persisting per-case outputs or model-quality metrics.
 
 Sprint 3A proves image-contract engineering, graceful degradation and synthetic provenance controls. It does not prove that a CNN was trained, that multimodal prediction is better, or that any image path is clinically valid. Real-image work requires a new authorization and model contract rather than reinterpreting this synthetic fixture boundary.
+
+## Sprint 4 — public longitudinal-outcome validation (completed)
+
+Sprint 4 adds a real public-cohort evaluation track without silently changing the synthetic HTTP contract:
+
+- This track validates the evaluation pipeline, not the LongiEye Y1-to-Y2 delta-feature design. OLSM is a baseline-predictor to five-year-outcome prognosis task, not trajectory modeling.
+- The OLSM public subset is downloaded from a commit-pinned `aplore3 0.9` source and verified against a fixed SHA-256. Raw rows remain under ignored `build/` storage.
+- The cohort contains 618 baseline non-myopic children and a five-year incident-myopia outcome (81 events). The distributed subset has stable participant IDs and no missing cells.
+- Three ridge-logistic models defined in this analysis version use repeated nested 5×5 participant-level cross-fitting. Hyperparameters are selected only inside outer training folds.
+- AUC, Brier, calibration intercept/slope and calibration bins are calculated after participant-level averaging of five repeated OOF predictions. The 2,000 participant bootstrap intervals are conditional on those predictions and do not refit the full pipeline.
+- Exploratory DCA uses a code-fixed 0.03–0.30 threshold range and a hypothetical enhanced-monitoring action. It was not independently preregistered and is not evidence of clinical utility.
+- Three paired AUC comparisons form one family and use Holm FWER control. None is significant after correction.
+- An entry-cohort chronological split and the five nested-CV repeat seeds are reported as sensitivity checks.
+- Git contains only aggregate JSON, deterministic SVG curves and the report. Participant rows, folds, OOF predictions and frozen parameters stay in ignored local storage.
+
+The prevalence-only Brier score is 0.114. The primary full-model AUC is 0.872 (95% conditional bootstrap CI 0.830–0.911), Brier score 0.080 (0.066–0.096), BSS approximately 0.30, calibration intercept -0.009 and slope 0.934. Refraction alone reaches AUC 0.859, so the other 13 features do not add a statistically detectable increment. With 81 events across 14 features (nominal EPV 5.8) and no external cohort, this is explicitly pilot internal validation.
+
+This track does not reproduce the private thesis model: the public subset has baseline right-eye predictors and a longitudinal outcome, not repeated Y1/Y2 measurements or the nine-feature delta contract. A future service endpoint would require a separately versioned API and intended-use review.

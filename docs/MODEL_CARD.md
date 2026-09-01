@@ -49,6 +49,8 @@ The feature contract was informed by a private thesis repository, but this model
 
 Different cohorts, modalities, ablations and validation designs must remain separate. Research results belong in an authorization-reviewed card created from the [research model-card template](RESEARCH_MODEL_CARD_TEMPLATE.md), not in this synthetic model card. The default research-artifact status is `NOT_AUTHORIZED`; no research checkpoint, preprocessing statistics, participant-level record or OOF prediction is packaged here.
 
+The repository also contains a separate [OLSM public-cohort validation](PUBLIC_COHORT_VALIDATION.md). Those real-data metrics belong to a baseline-only five-year incident-myopia model with a different feature and outcome contract. They do not validate this synthetic JSON service and must not be merged with the table above.
+
 ## Intended uses
 
 - Demonstrating API, validation, observability and reproducibility practices.

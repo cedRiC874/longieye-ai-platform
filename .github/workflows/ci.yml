@@ -37,7 +37,7 @@ jobs:
           python -m venv "$RUNNER_TEMP/longieye-wheel-smoke"
           "$RUNNER_TEMP/longieye-wheel-smoke/bin/python" -m pip install --no-deps dist/*.whl
           cd "$RUNNER_TEMP"
-          "$RUNNER_TEMP/longieye-wheel-smoke/bin/python" -c "import longieye; import longieye.fusion; import longieye.imaging; import longieye.research as research; assert longieye.__version__ == '0.4.0'; assert hasattr(research, 'ResearchModelAdapter'); assert not hasattr(research, 'TorchStateDictRuntime')"
+          "$RUNNER_TEMP/longieye-wheel-smoke/bin/python" -c "import longieye; import longieye.fusion; import longieye.imaging; import longieye.research as research; assert longieye.__version__ == '0.5.0'; assert hasattr(research, 'ResearchModelAdapter'); assert not hasattr(research, 'TorchStateDictRuntime')"
       - run: python -m pytest -q
       - if: matrix.python-version == '3.12'
         run: python scripts/benchmark_service.py --warmup 5 --core-iterations 1000 --api-iterations 100 --memory-iterations 20
@@ -79,3 +79,52 @@ jobs:
       - run: python -c "import torch; assert torch.__version__.split('+', 1)[0] == '2.13.0'; assert torch.tensor([1.0]).device.type == 'cpu'"
       - run: python scripts/validate_research_manifest.py
       - run: python -m pytest -q tests/test_model_contract.py tests/test_research_adapter.py tests/test_comparison.py
+
+  public-cohort-validation:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: |
+            requirements.lock
+            requirements.evaluation.lock
+      - run: python -m pip install -r requirements.lock
+      - run: python -m pip install -r requirements.evaluation.lock
+      - run: python -m pip install --no-deps -e .
+      - run: python scripts/run_public_cohort_validation.py --bootstrap 2000
+      - run: |
+          git ls-files --error-unmatch \
+            benchmarks/public_cohort_validation.json \
+            docs/PUBLIC_COHORT_VALIDATION.md \
+            docs/assets/public_cohort_calibration.svg \
+            docs/assets/public_cohort_dca.svg
+          git diff --exit-code -- \
+            benchmarks/public_cohort_validation.json \
+            docs/PUBLIC_COHORT_VALIDATION.md \
+            docs/assets/public_cohort_calibration.svg \
+            docs/assets/public_cohort_dca.svg
+          test -z "$(git status --porcelain --untracked-files=all -- \
+            benchmarks/public_cohort_validation.json \
+            docs/PUBLIC_COHORT_VALIDATION.md \
+            docs/assets/public_cohort_calibration.svg \
+            docs/assets/public_cohort_dca.svg)"
+      - run: python -m pytest -q tests/test_public_validation.py
+      - if: matrix.python-version == '3.12'
+        run: python -m pip wheel --no-deps --wheel-dir dist .
+      - if: matrix.python-version == '3.12'
+        run: |
+          python -m venv "$RUNNER_TEMP/longieye-evaluation-wheel"
+          "$RUNNER_TEMP/longieye-evaluation-wheel/bin/python" -m pip install -r requirements.runtime.lock
+          "$RUNNER_TEMP/longieye-evaluation-wheel/bin/python" -m pip install -r requirements.evaluation.lock
+          "$RUNNER_TEMP/longieye-evaluation-wheel/bin/python" -m pip install --no-deps dist/*.whl
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/longieye-evaluation-wheel/bin/python" -c "from importlib.metadata import metadata; import longieye.public_validation; m=metadata('longieye-ai-platform'); assert m['Version']=='0.5.0'; assert m['License-Expression']=='GPL-3.0-only'; assert 'evaluation' in (m.get_all('Provides-Extra') or []); assert any('numpy' in value and 'extra ==' in value and 'evaluation' in value for value in (m.get_all('Requires-Dist') or []))"
+          "$RUNNER_TEMP/longieye-evaluation-wheel/bin/python" -m pip check
+      - if: matrix.python-version == '3.12'
+        run: python scripts/check_public_artifacts.py

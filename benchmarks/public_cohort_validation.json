@@ -1,0 +1,696 @@
+{
+  "analysis_date": "2026-08-31",
+  "analysis_id": "olsm-five-year-myopia-internal-validation-v1",
+  "calibration_curve": [
+    {
+      "bin": 1,
+      "n": 78,
+      "observed_rate": 0.0,
+      "observed_rate_ci_95": [
+        0.0,
+        0.0
+      ],
+      "predicted_mean": 0.001283260165
+    },
+    {
+      "bin": 2,
+      "n": 78,
+      "observed_rate": 0.01282051282,
+      "observed_rate_ci_95": [
+        0.0,
+        0.04168133803
+      ],
+      "predicted_mean": 0.008209049335
+    },
+    {
+      "bin": 3,
+      "n": 77,
+      "observed_rate": 0.01298701299,
+      "observed_rate_ci_95": [
+        0.0,
+        0.04225352113
+      ],
+      "predicted_mean": 0.01954076253
+    },
+    {
+      "bin": 4,
+      "n": 77,
+      "observed_rate": 0.05194805195,
+      "observed_rate_ci_95": [
+        0.01074702886,
+        0.1052631579
+      ],
+      "predicted_mean": 0.03646077363
+    },
+    {
+      "bin": 5,
+      "n": 77,
+      "observed_rate": 0.06493506494,
+      "observed_rate_ci_95": [
+        0.01282051282,
+        0.1290417457
+      ],
+      "predicted_mean": 0.06227688288
+    },
+    {
+      "bin": 6,
+      "n": 77,
+      "observed_rate": 0.1298701299,
+      "observed_rate_ci_95": [
+        0.05880642955,
+        0.2089639014
+      ],
+      "predicted_mean": 0.1170845725
+    },
+    {
+      "bin": 7,
+      "n": 77,
+      "observed_rate": 0.2337662338,
+      "observed_rate_ci_95": [
+        0.1395275243,
+        0.3333333333
+      ],
+      "predicted_mean": 0.2384165759
+    },
+    {
+      "bin": 8,
+      "n": 77,
+      "observed_rate": 0.5454545455,
+      "observed_rate_ci_95": [
+        0.4328173945,
+        0.6575432588
+      ],
+      "predicted_mean": 0.5743644709
+    }
+  ],
+  "dataset": {
+    "events": 81,
+    "missing_cells": 0,
+    "name": "Orinda Longitudinal Study of Myopia public subset",
+    "non_events": 537,
+    "package_documentation": "https://search.r-project.org/CRAN/refmans/aplore3/html/myopia.html",
+    "package_license": "GPL-3",
+    "participants": 618,
+    "rights_review": "Package-level GPL-3 confirmed; underlying cohort-data reuse rights not independently verified.",
+    "source_commit": "f842768f2f1333d2d9cb468b0263655cea018bc5",
+    "source_file": "rawdata/MYOPIA/MYOPIA.txt",
+    "source_package": "aplore3 0.9",
+    "source_sha256": "4147ac651d8f1a975be7eefb39a49044e9a0e5a8f97ddfb40bc764f70680784d",
+    "source_url": "https://raw.githubusercontent.com/lbraglia/aplore3/f842768f2f1333d2d9cb468b0263655cea018bc5/rawdata/MYOPIA/MYOPIA.txt"
+  },
+  "dca": {
+    "model_net_benefit": {
+      "full": [
+        0.1130183832,
+        0.1075377562,
+        0.1021120763,
+        0.09402327343,
+        0.09284198072,
+        0.09075559308,
+        0.08894341904,
+        0.08665947501,
+        0.0824151849,
+        0.08053839365,
+        0.07995759402,
+        0.07751937984,
+        0.07338663621,
+        0.07042687625,
+        0.06659648302,
+        0.06421185571,
+        0.06386591554,
+        0.06351132686,
+        0.05898979968,
+        0.05908223384,
+        0.05934518556,
+        0.05825242718,
+        0.0544768069,
+        0.05182366833,
+        0.04696989848,
+        0.04557713053,
+        0.04660649984,
+        0.04692556634
+      ],
+      "ocular": [
+        0.1127347946,
+        0.1098975189,
+        0.1060296372,
+        0.1015630379,
+        0.09687858858,
+        0.09335866048,
+        0.08622283865,
+        0.08000719166,
+        0.07677902622,
+        0.07281553398,
+        0.06961648626,
+        0.07003085723,
+        0.06653340948,
+        0.06403143782,
+        0.05846687722,
+        0.0577393638,
+        0.05463662152,
+        0.053802589,
+        0.04917864897,
+        0.04709152767,
+        0.04511831211,
+        0.03943110203,
+        0.0377562028,
+        0.03677949794,
+        0.03761581771,
+        0.03802588997,
+        0.03858425635,
+        0.03791030975
+      ],
+      "refraction_only": [
+        0.1123844794,
+        0.1075377562,
+        0.1034747062,
+        0.1012187565,
+        0.09355534677,
+        0.08590122415,
+        0.08282655855,
+        0.08036677454,
+        0.07899712738,
+        0.07303618711,
+        0.06920730573,
+        0.0659667344,
+        0.06120312203,
+        0.05848358761,
+        0.05721916793,
+        0.05683163628,
+        0.05463662152,
+        0.05420711974,
+        0.05231248208,
+        0.05012032196,
+        0.05062413315,
+        0.04965082609,
+        0.05124056095,
+        0.04867488848,
+        0.04792303941,
+        0.04413879899,
+        0.04343862528,
+        0.03791030975
+      ]
+    },
+    "primary_ci_95": {
+      "lower": [
+        0.08687568812,
+        0.08144552319,
+        0.07698432976,
+        0.06957670591,
+        0.06847792045,
+        0.06634304207,
+        0.06436928767,
+        0.06238313556,
+        0.0581615214,
+        0.05656075316,
+        0.05594613696,
+        0.05327952134,
+        0.04911241196,
+        0.04653066728,
+        0.04286612469,
+        0.04013339648,
+        0.03961354828,
+        0.04004854369,
+        0.03614866249,
+        0.03580511991,
+        0.03637624511,
+        0.03508346108,
+        0.03074433657,
+        0.02825155252,
+        0.0239122002,
+        0.02283126573,
+        0.02395277816,
+        0.02450300509
+      ],
+      "upper": [
+        0.1405264738,
+        0.1346413161,
+        0.1295371317,
+        0.1198099566,
+        0.1187362982,
+        0.1173543689,
+        0.1154917494,
+        0.1130933118,
+        0.1086692302,
+        0.1064283613,
+        0.1061679314,
+        0.1037884775,
+        0.09937416714,
+        0.09662891046,
+        0.09252641634,
+        0.09037907491,
+        0.09003555875,
+        0.0894012945,
+        0.08399901684,
+        0.08401792382,
+        0.08441558442,
+        0.08346107988,
+        0.07874865156,
+        0.07636337794,
+        0.07142516735,
+        0.07011866235,
+        0.07094671589,
+        0.07143435044
+      ]
+    },
+    "status": "exploratory_hypothetical_monitoring_action",
+    "thresholds": [
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12,
+      0.13,
+      0.14,
+      0.15,
+      0.16,
+      0.17,
+      0.18,
+      0.19,
+      0.2,
+      0.21,
+      0.22,
+      0.23,
+      0.24,
+      0.25,
+      0.26,
+      0.27,
+      0.28,
+      0.29,
+      0.3
+    ],
+    "treat_all": [
+      0.1041937744,
+      0.09486245955,
+      0.08533469596,
+      0.07560421401,
+      0.06566447437,
+      0.05550865344,
+      0.04512962765,
+      0.03451995685,
+      0.02367186648,
+      0.0125772286,
+      0.001227541569,
+      -0.01038609167,
+      -0.02227298686,
+      -0.03444290337,
+      -0.04690607089,
+      -0.05967321809,
+      -0.0727556035,
+      -0.08616504854,
+      -0.09991397321,
+      -0.1140154344,
+      -0.1284831673,
+      -0.14333163,
+      -0.1585760518,
+      -0.1742324849,
+      -0.1903178614,
+      -0.2068500539,
+      -0.223847942,
+      -0.241331484
+    ],
+    "treat_none": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "entry_cohort_chronological_split_sensitivity": {
+    "models": {
+      "full": {
+        "auc": 0.8575875486,
+        "brier": 0.09382889948,
+        "ridge_lambda": 1.0
+      },
+      "ocular": {
+        "auc": 0.8623432771,
+        "brier": 0.09706236037,
+        "ridge_lambda": 1.0
+      },
+      "refraction_only": {
+        "auc": 0.8535667964,
+        "brier": 0.1009869238,
+        "ridge_lambda": 0.1
+      }
+    },
+    "test_events": 45,
+    "test_participants": 302,
+    "test_years": "1993-1995",
+    "train_events": 36,
+    "train_participants": 316,
+    "train_years": "1990-1992"
+  },
+  "limitations": [
+    "Only 81 events; results are pilot internal validation, not confirmation.",
+    "The full model has 81 events across 14 candidate features (nominal EPV 5.8), below the conventional 10-EPV heuristic; ridge regularization mitigates but does not remove overfitting uncertainty.",
+    "The public subset contains baseline predictors and a longitudinal outcome, not repeated Y1/Y2 predictors.",
+    "No external cohort was available; cross-validation is not external validation.",
+    "DCA uses a hypothetical enhanced-monitoring action and does not establish clinical utility.",
+    "The dataset is an OLSM subset distributed through an unofficial companion R package.",
+    "The pooled cross-fitted AUC compares probabilities produced by fold-specific fitted pipelines."
+  ],
+  "model_comparisons": [
+    {
+      "candidate": "ocular",
+      "comparison": "ocular_vs_refraction_only",
+      "delta_auc": 0.005034829988,
+      "delta_auc_ci_95": [
+        -0.01019693529,
+        0.02041309717
+      ],
+      "p_value_holm": 1.0,
+      "p_value_raw": 0.500749925,
+      "reference": "refraction_only",
+      "reject_fwer_0_05": false
+    },
+    {
+      "candidate": "full",
+      "comparison": "full_vs_refraction_only",
+      "delta_auc": 0.01280548084,
+      "delta_auc_ci_95": [
+        -0.01408342077,
+        0.03772857557
+      ],
+      "p_value_holm": 1.0,
+      "p_value_raw": 0.3478652135,
+      "reference": "refraction_only",
+      "reject_fwer_0_05": false
+    },
+    {
+      "candidate": "full",
+      "comparison": "full_vs_ocular",
+      "delta_auc": 0.007770650849,
+      "delta_auc_ci_95": [
+        -0.01718865855,
+        0.02997275702
+      ],
+      "p_value_holm": 1.0,
+      "p_value_raw": 0.5338466153,
+      "reference": "ocular",
+      "reject_fwer_0_05": false
+    }
+  ],
+  "models": {
+    "full": {
+      "auc": 0.8722210727,
+      "auc_ci_95": [
+        0.8298137631,
+        0.9106133065
+      ],
+      "brier": 0.08025335167,
+      "brier_ci_95": [
+        0.06572441382,
+        0.09644422249
+      ],
+      "brier_skill_score": 0.2953380444,
+      "brier_skill_score_ci_95": [
+        0.1940438221,
+        0.3884467967
+      ],
+      "calibration_intercept": -0.009396875002,
+      "calibration_slope": 0.9343053899,
+      "features": [
+        "age",
+        "gender",
+        "spheq",
+        "al",
+        "acd",
+        "lt",
+        "vcd",
+        "sporthr",
+        "readhr",
+        "comphr",
+        "studyhr",
+        "tvhr",
+        "mommy",
+        "dadmy"
+      ],
+      "selected_ridge_lambdas_by_crossfit_repeat": [
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      ]
+    },
+    "ocular": {
+      "auc": 0.8644504219,
+      "auc_ci_95": [
+        0.8252800043,
+        0.9021515647
+      ],
+      "brier": 0.08294477075,
+      "brier_ci_95": [
+        0.06828395317,
+        0.09909293829
+      ],
+      "brier_skill_score": 0.2717061263,
+      "brier_skill_score_ci_95": [
+        0.1762718679,
+        0.3603644764
+      ],
+      "calibration_intercept": -0.008728310094,
+      "calibration_slope": 0.9924234106,
+      "features": [
+        "age",
+        "gender",
+        "spheq",
+        "al",
+        "acd",
+        "lt",
+        "vcd"
+      ],
+      "selected_ridge_lambdas_by_crossfit_repeat": [
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      ]
+    },
+    "refraction_only": {
+      "auc": 0.8594155919,
+      "auc_ci_95": [
+        0.820087569,
+        0.9000264242
+      ],
+      "brier": 0.08297151494,
+      "brier_ci_95": [
+        0.06854729266,
+        0.09892004002
+      ],
+      "brier_skill_score": 0.2714712998,
+      "brier_skill_score_ci_95": [
+        0.176668289,
+        0.3593904455
+      ],
+      "calibration_intercept": -0.003719006265,
+      "calibration_slope": 1.001766517,
+      "features": [
+        "spheq"
+      ],
+      "selected_ridge_lambdas_by_crossfit_repeat": [
+        [
+          0.1,
+          1.0,
+          0.1,
+          0.1,
+          0.1
+        ],
+        [
+          0.1,
+          0.1,
+          0.1,
+          1.0,
+          0.1
+        ],
+        [
+          0.1,
+          1.0,
+          1.0,
+          0.1,
+          1.0
+        ],
+        [
+          0.1,
+          0.1,
+          0.1,
+          0.1,
+          0.1
+        ],
+        [
+          0.1,
+          0.1,
+          0.1,
+          0.1,
+          0.1
+        ]
+      ]
+    }
+  },
+  "multiplicity": {
+    "alpha": 0.05,
+    "family": "three analysis-version-defined paired AUC comparisons",
+    "method": "Holm family-wise error control",
+    "raw_p_value_method": "paired participant-level randomization test"
+  },
+  "null_model": {
+    "constant_probability_brier": 0.1138891507,
+    "event_rate": 0.1310679612
+  },
+  "primary_calibration_ci_95": {
+    "intercept": [
+      -0.3057935253,
+      0.2728379248
+    ],
+    "slope": [
+      0.7640712587,
+      1.169995237
+    ]
+  },
+  "primary_model": "full",
+  "schema_version": 1,
+  "split_sensitivity": {
+    "auc_max": 0.8844058211,
+    "auc_median": 0.8673471734,
+    "auc_min": 0.8619445019,
+    "auc_values": [
+      0.8655309562,
+      0.8673471734,
+      0.8619445019,
+      0.8844058211,
+      0.8737154287
+    ],
+    "model": "full",
+    "seeds": [
+      20260831,
+      20260832,
+      20260833,
+      20260834,
+      20260835
+    ]
+  },
+  "task": {
+    "analysis_type": "pilot internal validation",
+    "outcome": "incident myopia at any time during the first five years",
+    "prediction_time": "initial examination",
+    "unit": "participant; right-eye baseline ocular measurements"
+  },
+  "validation": {
+    "bootstrap_repetitions": 2000,
+    "bootstrap_scope": "conditional on repeated OOF predictions; models are not refit inside bootstrap samples",
+    "bootstrap_unit": "participant",
+    "crossfit_repetitions": 5,
+    "crossfit_seeds": [
+      20260831,
+      20260832,
+      20260833,
+      20260834,
+      20260835
+    ],
+    "inner_folds": 5,
+    "oof_predictions_persisted": false,
+    "outer_folds": 5,
+    "permutation_repetitions": 10000,
+    "primary_estimand": "pooled participant-level AUC after averaging five repeated OOF probabilities; each fold uses its own fitted pipeline",
+    "ridge_lambda_grid": [
+      0.01,
+      0.1,
+      1.0,
+      10.0,
+      100.0
+    ],
+    "seed": 20260831,
+    "tuning_metric": "log_loss"
+  }
+}

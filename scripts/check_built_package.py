@@ -85,8 +85,23 @@ def verify_wheel(wheel_path: Path) -> dict[str, object]:
                 raise BuiltPackageError("wheel metadata inventory is invalid")
             metadata_bytes = archive.read(metadata_names[0])
             metadata = BytesParser().parsebytes(metadata_bytes)
-            if metadata.get("Version") != "0.4.0":
-                raise BuiltPackageError("wheel version does not match Sprint 3")
+            if metadata.get("Version") != "0.5.0":
+                raise BuiltPackageError("wheel version does not match reviewed source")
+            if metadata.get("License-Expression") != "GPL-3.0-only":
+                raise BuiltPackageError("wheel license expression is missing or stale")
+            license_names = [
+                name
+                for name in names
+                if name.endswith(".dist-info/licenses/LICENSE")
+            ]
+            if len(license_names) != 1:
+                raise BuiltPackageError("wheel license inventory is invalid")
+            wheel_license = archive.read(license_names[0]).replace(b"\r\n", b"\n")
+            source_license = (PROJECT_ROOT / "LICENSE").read_bytes().replace(
+                b"\r\n", b"\n"
+            )
+            if wheel_license != source_license:
+                raise BuiltPackageError("wheel contains a stale license")
             normalized_metadata = metadata_bytes.replace(b"\r\n", b"\n")
             _, separator, description = normalized_metadata.partition(b"\n\n")
             expected_description = (PROJECT_ROOT / "README.md").read_bytes().replace(

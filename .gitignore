@@ -21,6 +21,7 @@ models/
 exports/
 private/
 research_packages/
+configs/public_cohort_model.json
 *.pth
 *.pt
 *.ckpt
@@ -85,3 +86,5 @@ research_packages/
 !examples/synthetic_fundus/od.png
 !examples/synthetic_fundus/os.png
 !docs/assets/architecture.svg
+!docs/assets/public_cohort_calibration.svg
+!docs/assets/public_cohort_dca.svg

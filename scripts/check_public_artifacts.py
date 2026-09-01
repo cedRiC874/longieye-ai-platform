@@ -61,13 +61,16 @@ DENIED_SUFFIXES = {
     ".zip",
 }
 MAX_TRACKED_FILE_BYTES = 5 * 1024 * 1024
+DENIED_EXACT_PATHS = {"configs/public_cohort_model.json"}
 ALLOWED_RESEARCH_TEMPLATES = {"configs/research_manifest.template.json"}
 ALLOWED_SYNTHETIC_IMAGES = {
     "examples/synthetic_fundus/od.png": "f232b6fc7a44b1c96d259cfced275c8bbfe84d3914234bae50515e7e1cd3e2dc",
     "examples/synthetic_fundus/os.png": "8b07a05783bd18a35f0581b325628268930b093267aba3b955e9abf64b64a16e",
 }
 ALLOWED_PUBLIC_VECTOR_IMAGES = {
-    "docs/assets/architecture.svg": "80577690c4896f6ecf7dcbb36478bd004a1707f1554a7c67b744f7188adec59c"
+    "docs/assets/architecture.svg": "80577690c4896f6ecf7dcbb36478bd004a1707f1554a7c67b744f7188adec59c",
+    "docs/assets/public_cohort_calibration.svg": "56101737bc2f93f11b2329b00d0b4b5962fc28af8f7003a01bdc2156fe1e30f2",
+    "docs/assets/public_cohort_dca.svg": "a877bdb7e437ab2a12d72b66d9e591b4f79636f47f5efa248ffd3d5e906ce40f",
 }
 DENIED_IMAGE_SUFFIXES = {
     ".avif",
@@ -105,6 +108,18 @@ SENSITIVE_DATA_TOKENS = {
     "preprocessing",
     "split",
 }
+DENIED_TABULAR_TEXT_TOKENS = {
+    "cohort",
+    "myopia",
+    "participant",
+    "patient",
+    "raw",
+    "subject",
+}
+OLSM_SOURCE_HEADER = (
+    b"ID\tSTUDYYEAR\tMYOPIC\tAGE\tGENDER\tSPHEQ\tAL\tACD\tLT\tVCD\t"
+    b"SPORTHR\tREADHR\tCOMPHR\tSTUDYHR\tTVHR\tDIOPTERHR\tMOMMY\tDADMY"
+)
 
 
 def policy_violations(paths: Iterable[str]) -> list[str]:
@@ -114,6 +129,9 @@ def policy_violations(paths: Iterable[str]) -> list[str]:
         lowered_path = normalized.lower()
         path = PurePosixPath(normalized)
         lowered_parts = tuple(part.lower() for part in path.parts)
+        if lowered_path in DENIED_EXACT_PATHS:
+            violations.append(normalized)
+            continue
         if any(part.startswith(".env") for part in lowered_parts):
             violations.append(normalized)
             continue
@@ -128,6 +146,11 @@ def policy_violations(paths: Iterable[str]) -> list[str]:
             violations.append(normalized)
             continue
         if path.suffix.lower() in DENIED_SUFFIXES:
+            violations.append(normalized)
+            continue
+        if path.suffix.lower() == ".txt" and any(
+            token in path.stem.lower() for token in DENIED_TABULAR_TEXT_TOKENS
+        ):
             violations.append(normalized)
             continue
         if (
@@ -211,6 +234,13 @@ def content_looks_like_denied_image(prefix: bytes) -> bool:
     return False
 
 
+def content_looks_like_denied_cohort(prefix: bytes) -> bool:
+    """Recognize the pinned OLSM participant-level TSV even if renamed."""
+
+    normalized = prefix.lstrip(b"\xef\xbb\xbf").replace(b"\r\n", b"\n")
+    return normalized.startswith(OLSM_SOURCE_HEADER + b"\n")
+
+
 class ArtifactReadError(ValueError):
     """Raised when a candidate cannot be inspected as a bounded regular file."""
 
@@ -269,7 +299,9 @@ def content_violations(paths: Iterable[str]) -> list[str]:
         except ArtifactReadError:
             violations.append(normalized)
             continue
-        if content_looks_like_denied_image(prefix):
+        if content_looks_like_denied_image(prefix) or content_looks_like_denied_cohort(
+            prefix
+        ):
             violations.append(normalized)
     return sorted(set(violations))
 
